@@ -42,8 +42,14 @@ Controls: WASD
 ### Todo
 * moving without energy consumption?
 * mouse interaction? is implemented, but didnt feel right - maybe I can improve that
-* attract functionality for player? (left click)
-* repel functionality for player? (right click)
+* attract functionality for player? (left click?)
+* repel functionality for player? (right click?)
+* add mute button
+* add restart button
+
+* add goals
+** put all things in one big ring of the blue membrane
+** build rings of specific length
 
 * rename membran to membrane
 * membrane connections should break when distance is to big
