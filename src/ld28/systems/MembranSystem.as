@@ -56,7 +56,7 @@ package ld28.systems {
 						var breakable:Breakable = connection.get(Breakable);
 						if (breakable.broken) {
 							// remove connection
-							trace("plop");
+							//trace("plop");
 							constraint = connection.get(DistanceConstraint);
 							
 							if (node1.membran.connected[constraint.entity1]) {
