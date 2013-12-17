@@ -16,6 +16,7 @@ package ld28 {
 	import ld28.systems.EnergyStorageEmitterSystem;
 	import ld28.systems.EnergyStorageViewSystem;
 	import ld28.systems.GravitySystem;
+	import ld28.systems.LifetimeSystem;
 	import ld28.systems.MembranSystem;
 	import ld28.systems.KeyboardMotionControlSystem;
 	import ld28.systems.MouseMotionControlSystem;
@@ -24,6 +25,7 @@ package ld28 {
 	import ld28.systems.RenderSystem;
 	import ld28.systems.SolidCollisionSystem;
 	import ld28.systems.SpatialHashingSystem;
+	import ld28.systems.TimerSystem;
 	
 	/**
 	 * ...
@@ -59,7 +61,7 @@ package ld28 {
 			
 			// add systems 
 			// todo: add priorites (CollisionSystem < SolidCollisionSystem, CollisionSystem < EnergyCollectingCollisionSystem)
-			var spatialHashingSystem:SpatialHashingSystem = new SpatialHashingSystem(config, 20);
+			var spatialHashingSystem:SpatialHashingSystem = new SpatialHashingSystem(config, 10);
 			var k:int = 0;
 			engine.addSystem(new RedrawingSystem(), k++);
 			engine.addSystem(new RenderSystem(container), k++);
@@ -80,13 +82,15 @@ package ld28 {
 			engine.addSystem(new MembranSystem(creator), k++);
 			engine.addSystem(new DistanceConstraintSystem(), k++);
 			engine.addSystem(new BreakingConnectionSystem(), k++);
+			engine.addSystem(new TimerSystem(), k++);
+			engine.addSystem(new LifetimeSystem(creator), k++);
 			
 			// create entities
 			creator.createGame();
 			
 			var i:int;
 			// spawn energy particles
-			for (i = 0; i < 10; i++) {
+			for (i = 0; i < 100; i++) {
 				creator.createEnergyParticle();
 			}
 			// spawn energy producers

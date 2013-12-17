@@ -66,11 +66,9 @@ package ld28.systems {
 								delete node1.membran.connected[constraint.entity2];
 							}
 							creator.destroyEntity(connection);
-							if (node1.membran.connections.length == 2) {
-								if (node1.membran.straigthener) {
-									creator.destroyEntity(node1.membran.straigthener);
-									node1.membran.straigthener = null;
-								}
+							if (node1.membran.straigthener) {
+								creator.destroyEntity(node1.membran.straigthener);
+								node1.membran.straigthener = null;
 							}
 							
 							node1.membran.connections.splice(i, 1);
@@ -99,6 +97,8 @@ package ld28.systems {
 								connection = creator.createConnection(node1.entity, node2.entity);
 								var breakable:Breakable = connection.get(Breakable);
 								breakable.maximumDistance *= 1.5;
+								constraint = connection.get(DistanceConstraint);
+								constraint.strength *= 2.5;
 								node1.membran.connections.push(connection);
 								node2.membran.connections.push(connection);
 								node1.membran.connected[node2.entity] = connection;

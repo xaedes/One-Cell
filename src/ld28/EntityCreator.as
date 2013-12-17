@@ -18,6 +18,7 @@ package ld28 {
 	import ld28.components.EnergyStorageEmitter;
 	import ld28.components.Gravity;
 	import ld28.components.HasEnergyStorageView;
+	import ld28.components.Lifetime;
 	import ld28.components.Mass;
 	import ld28.components.Membran;
 	import ld28.components.Motion;
@@ -31,7 +32,9 @@ package ld28 {
 	import ld28.components.Size;
 	import ld28.components.SolidCollision;
 	import ld28.components.SpatialHashed;
+	import ld28.components.Timer;
 	import ld28.graphics.CircleView;
+	import ld28.graphics.EnergyParticleView;
 	import ld28.graphics.EnergyProducerView;
 	import ld28.graphics.LineView;
 	import ld28.graphics.MembranPartView;
@@ -100,12 +103,14 @@ package ld28 {
 			var density:Number = 1;
 			var pos:Point = new Point(Utils.randomRange(0, config.width), Utils.randomRange(0, config.height));
 			
-			var circleView:CircleView = new CircleView(radius, 0xFFF4BA);
+			//var view:CircleView = new CircleView(radius, 0xFFF4BA);
+			var view:EnergyParticleView = new EnergyParticleView(entity);
 			with (entity) {
 				add(new Position(pos.x, pos.y));
 				add(new Size(new Point(radius * 2, radius * 2)));
 				add(new Circle(radius));
-				add(new Display(circleView));
+				add(new Redrawing(view));
+				add(new Display(view));
 				add(new Motion(Utils.randomRange(-10, 10), Utils.randomRange(-10, 10), 0.999));
 				add(new EnergyStorage(energyAmount, energyAmount));
 				add(new Collision());
@@ -113,6 +118,8 @@ package ld28 {
 				add(new SpatialHashed());
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new SolidCollision(0.6));
+				add(new Timer());
+				add(new Lifetime(5));
 					//add(new Gravity(new Point(config.width / 2, 3 * config.height / 4), 5));
 			}
 			
@@ -137,9 +144,9 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.995));
 				add(new EnergyStorage(_maxEnergy, Utils.randomRange(0, _maxEnergy)));
 				add(new Collision());
-				add(new EnergyProducer(0.1, 0.03));
-				//add(new EnergyProducer(0.1, 0.1));
-				add(new EnergyStorageEmitter(0.1, radius + 3, 1, 10, 1, 5, 5));
+				//add(new EnergyProducer(0.1, 0.03));
+				add(new EnergyProducer(0.1, 1.1));
+				add(new EnergyStorageEmitter(0.1, radius + 3, 5, 30, 1, 5, 5));
 				add(new HasEnergyStorageView(energyProducerView.energyStorageView));
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new SolidCollision(0.05));
