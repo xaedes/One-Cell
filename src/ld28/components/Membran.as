@@ -4,6 +4,7 @@ package ld28.components {
 	
 	public class Membran {
 		public var connections:Vector.<Entity> = new Vector.<Entity>();
+		public var straigthener:Entity = null;
 		public var connected:Dictionary = new Dictionary();
 		
 		public function Membran() {

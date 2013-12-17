@@ -6,6 +6,7 @@ package ld28 {
 	import flash.ui.Keyboard;
 	import ld28.components.Anchor;
 	import ld28.components.Audio;
+	import ld28.components.Breakable;
 	import ld28.components.Circle;
 	import ld28.components.Collision;
 	import ld28.components.Display;
@@ -71,8 +72,8 @@ package ld28 {
 				add(new Size(new Point(radius * 2, radius * 2)));
 				add(new Circle(radius));
 				add(new Display(moverView));
-				add(new Mover(0.001));
-				//add(new Mover(0.0));
+				//add(new Mover(0.001));
+				add(new Mover(0.0));
 				add(new Motion(0, 0, 0.95));
 				add(new EnergyStorage(10, 5));
 				add(new HasEnergyStorageView(moverView.energyStorageView));
@@ -213,6 +214,7 @@ package ld28 {
 				add(new Redrawing(view));
 				add(new Display(view));
 				add(new DistanceConstraint(entity1, entity2, distance, 1, 0.45));
+				add(new Breakable(distance * 3));
 			}
 			
 			engine.addEntity(entity);

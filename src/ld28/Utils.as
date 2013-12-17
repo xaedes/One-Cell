@@ -1,6 +1,7 @@
 package ld28 {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;
 	
 	/**
 	 * ...
@@ -50,7 +51,14 @@ package ld28 {
 			pointSet(axisPart, mult(axisNormalised, dot(vec, axisNormalised)));
 			pointSet(rest, vec.subtract(axisPart));
 		}
-	
+		
+		static public function getKeys(dict:Dictionary):Array {
+			var keys:Array = new Array();
+			for (var key:Object in dict) {
+				keys.push(key);
+			}
+			return keys;
+		}
 	}
 
 }
