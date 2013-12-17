@@ -5,6 +5,8 @@ package ld28 {
 	import flash.net.LocalConnection;
 	import flash.ui.Keyboard;
 	import ld28.components.Anchor;
+	import ld28.components.Attractable;
+	import ld28.components.Attractor;
 	import ld28.components.Audio;
 	import ld28.components.Breakable;
 	import ld28.components.Circle;
@@ -68,6 +70,10 @@ package ld28 {
 			
 			var pos:Point = new Point(config.width / 2, config.height / 2);
 			
+			var attractor:Entity = createRadar(radius * 2);
+			attractor.add(new Anchor(entity));
+			attractor.add(new Attractor(2));
+			
 			var moverView:MoverView = new MoverView(radius);
 			with (entity) {
 				add(new Player());
@@ -90,6 +96,7 @@ package ld28 {
 				add(new SolidCollision(0.9));
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
+				
 			}
 			
 			engine.addEntity(entity);
@@ -120,6 +127,7 @@ package ld28 {
 				add(new SolidCollision(0.6));
 				add(new Timer());
 				add(new Lifetime(5));
+				add(new Attractable(-1));
 					//add(new Gravity(new Point(config.width / 2, 3 * config.height / 4), 5));
 			}
 			
@@ -152,6 +160,7 @@ package ld28 {
 				add(new SolidCollision(0.05));
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
+				add(new Attractable(1));
 				add(new Gravity(new Point(config.width / 2, 1 * config.height / 4), 3));
 			}
 			engine.addEntity(entity);
@@ -199,6 +208,7 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.95));
 				add(new Radar(radar));
 				add(new Membran());
+				add(new Attractable(1));
 			}
 			
 			engine.addEntity(entity);

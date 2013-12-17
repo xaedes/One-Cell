@@ -44,12 +44,15 @@ Controls: WASD
 * mouse interaction? is implemented, but didnt feel right - maybe I can improve that
 * attract functionality for player? (left click?)
 * repel functionality for player? (right click?)
-* add mute button
+* add mute button (!!!)
 * add restart button
-
+* tutorial
+** Partikel die aussehen wie die Keyboardtasten W,A,S, und D fliegen einem am anfang zu aus der richtung in die sie zeigen - dann wird der spieler aufgefordert die taste zu drücken - spieler kurz einfrieren um ihm andere taste zuwerfen zu können wenn er ursprungsposition erreicht hat
 * add goals
 ** put all things in one big ring of the blue membrane
 ** build rings of specific length
+
+* upgrades für chloroplasts
 
 * rename membran to membrane
 * membrane connections should break when distance is to big
