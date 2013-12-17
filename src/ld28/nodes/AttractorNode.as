@@ -1,5 +1,6 @@
 package ld28.nodes {
 	import ash.core.Node;
+	import ld28.components.Attracting;
 	import ld28.components.Attractor;
 	import ld28.components.Circle;
 	import ld28.components.Collision;
@@ -10,6 +11,7 @@ package ld28.nodes {
 	 * @author xaedes
 	 */
 	public class AttractorNode extends Node {
+		public var attracting:Attracting;
 		public var attractor:Attractor;
 		public var position:Position;
 		public var collision:Collision;

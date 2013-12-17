@@ -43,7 +43,7 @@ package ld28.systems {
 							minRadius += attractableCircle.radius;
 						var diff:Point = attractable.position.position.subtract(attractor.position.position);
 						if (diff.length <= minRadius) {
-							diff.normalize(attractor.attractor.strength * attractable.attractable.factor);
+							diff.normalize(attractor.attracting.strength * attractable.attractable.factor);
 							
 							//attractable.position.position
 							Utils.pointSub(attractable.motion.velocity, diff);

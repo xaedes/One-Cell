@@ -1,14 +1,15 @@
 package ld28.components {
+	import ash.fsm.EntityStateMachine;
 	
 	/**
 	 * ...
 	 * @author xaedes
 	 */
 	public class Attractor {
-		public var strength:Number;
+		public var fsm:EntityStateMachine;
 		
-		public function Attractor(strength:Number) {
-			this.strength = strength;
+		public function Attractor(fsm:EntityStateMachine) {
+			this.fsm = fsm;
 		}
 	
 	}

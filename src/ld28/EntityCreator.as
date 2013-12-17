@@ -1,12 +1,16 @@
 package ld28 {
 	import ash.core.Engine;
 	import ash.core.Entity;
+	import ash.fsm.EntityState;
+	import ash.fsm.EntityStateMachine;
 	import flash.geom.Point;
 	import flash.net.LocalConnection;
 	import flash.ui.Keyboard;
 	import ld28.components.Anchor;
 	import ld28.components.Attractable;
+	import ld28.components.Attracting;
 	import ld28.components.Attractor;
+	import ld28.components.AttractorController;
 	import ld28.components.Audio;
 	import ld28.components.Breakable;
 	import ld28.components.Circle;
@@ -70,9 +74,9 @@ package ld28 {
 			
 			var pos:Point = new Point(config.width / 2, config.height / 2);
 			
-			var attractor:Entity = createRadar(radius * 2);
+			var attractor:Entity = createAttractor(radius * 3, 5);
 			attractor.add(new Anchor(entity));
-			attractor.add(new Attractor(2));
+			attractor.add(new AttractorController(Keyboard.SPACE));
 			
 			var moverView:MoverView = new MoverView(radius);
 			with (entity) {
@@ -90,7 +94,7 @@ package ld28 {
 				//add(new MouseMotionControls(100));
 				
 				add(new Audio());
-				//add(new EnergyStorageEmitter(0.1, radius + 3, 1, 10, 0, 1, 1));
+				add(new EnergyStorageEmitter(0.1, radius + 3, 1, 10, 0, 1, 1));
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new Collision());
 				add(new SolidCollision(0.9));
@@ -235,6 +239,36 @@ package ld28 {
 			}
 			
 			engine.addEntity(entity);
+			return entity;
+		}
+		
+		public function createAttractor(radius:Number, strength:Number):Entity {
+			var entity:Entity = createRadar(radius);
+			
+			var state:EntityState;
+			var fsm:EntityStateMachine = new EntityStateMachine(entity);
+			
+			var view:CircleView = new CircleView(radius, 0xFFFFFF, 0.1);
+			state = fsm.createState("active");
+			with (state) {
+				add(Attracting).withInstance(new Attracting(strength));
+				add(Collision).withInstance(new Collision());
+				add(Display).withInstance(new Display(view));
+				
+			}
+			state = fsm.createState("inactive");
+			with (state) {
+			}
+			
+			with (entity) {
+				add(new Position(0, 0));
+				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Circle(radius));
+				//add(new Display(view));
+				add(new SpatialHashed());
+				add(new Attractor(fsm));
+			}
+			fsm.changeState("inactive");
 			return entity;
 		}
 	

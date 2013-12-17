@@ -7,6 +7,7 @@ package ld28 {
 	import ld28.input.MousePoll;
 	import ld28.nodes.BreakingConnectionSystem;
 	import ld28.systems.AnchorSystem;
+	import ld28.systems.AttractorControllerSystem;
 	import ld28.systems.AttractorSystem;
 	import ld28.systems.AudioSystem;
 	import ld28.systems.CollisionSystem;
@@ -86,6 +87,7 @@ package ld28 {
 			engine.addSystem(new TimerSystem(), k++);
 			engine.addSystem(new LifetimeSystem(creator), k++);
 			engine.addSystem(new AttractorSystem(), k++);
+			engine.addSystem(new AttractorControllerSystem(keyPoll), k++);
 			
 			// create entities
 			creator.createGame();
