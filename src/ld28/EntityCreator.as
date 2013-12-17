@@ -75,8 +75,8 @@ package ld28 {
 				add(new Size(new Point(radius * 2, radius * 2)));
 				add(new Circle(radius));
 				add(new Display(moverView));
-				//add(new Mover(0.001));
-				add(new Mover(0.0));
+				add(new Mover(0.001));
+				//add(new Mover(0.0));
 				add(new Motion(0, 0, 0.95));
 				add(new EnergyStorage(10, 5));
 				add(new HasEnergyStorageView(moverView.energyStorageView));
@@ -145,8 +145,8 @@ package ld28 {
 				add(new EnergyStorage(_maxEnergy, Utils.randomRange(0, _maxEnergy)));
 				add(new Collision());
 				//add(new EnergyProducer(0.1, 0.03));
-				add(new EnergyProducer(0.1, 1.1));
-				add(new EnergyStorageEmitter(0.1, radius + 3, 5, 30, 1, 5, 5));
+				add(new EnergyProducer(0.1, 0.2));
+				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 1, 1, 5));
 				add(new HasEnergyStorageView(energyProducerView.energyStorageView));
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new SolidCollision(0.05));
