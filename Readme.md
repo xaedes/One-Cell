@@ -24,7 +24,7 @@ Link to Ludum Dare entry: http://www.ludumdare.com/compo/ludum-dare-28/?action=p
 
 ### Live Version can be viewed here:
 
-http://xaedes.de/dev/ld28/
+http://xaedes.de/dev/one-cell/
 	
 Controls: WASD
 
