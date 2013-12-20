@@ -4,6 +4,8 @@ package ld28.systems {
 	import ash.core.Entity;
 	import ash.core.NodeList;
 	import ash.core.System;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormatAlign;
 	import ld28.components.Display;
 	import ld28.components.Position;
 	import ld28.EntityCreator;
@@ -57,10 +59,15 @@ package ld28.systems {
 						creator.createMembranPart();
 					}
 					creator.createPlayer();
-					var text:Entity = creator.createFloatingText("Controls: WASD Space", 2);
+					var text:Entity = creator.createText("Controls: WASD Space");
 					var position:Position = Position(text.get(Position));
 					position.position.x = 100;
 					position.position.y = 50;
+					var display:Display = Display(text.get(Display));
+					//display.displayObject.
+					var textView:TextView = TextView(display.displayObject);
+					textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
+					textView.textField.autoSize = TextFieldAutoSize.LEFT;
 					game.gameState.state = "alive";
 					
 				} else if (game.gameState.state == "alive") {

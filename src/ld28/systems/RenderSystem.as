@@ -56,6 +56,7 @@ package ld28.systems {
 				
 				displayObject.x = position.position.x + additional.x;
 				displayObject.y = position.position.y + additional.y;
+					//container.setChildIndex
 			}
 		}
 		

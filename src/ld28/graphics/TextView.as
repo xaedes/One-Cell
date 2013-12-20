@@ -11,7 +11,7 @@ package ld28.graphics {
 	 * @author xaedes
 	 */
 	public class TextView extends Sprite implements Redrawable {
-		private var textField:TextField;
+		public var textField:TextField;
 		private var text:Text;
 		
 		public function TextView(text:Text) {

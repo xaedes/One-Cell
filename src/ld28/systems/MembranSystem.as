@@ -59,6 +59,14 @@ package ld28.systems {
 							//trace("plop");
 							constraint = connection.get(DistanceConstraint);
 							
+							var pos1:Position = Position(constraint.entity1.get(Position));
+							var pos2:Position = Position(constraint.entity2.get(Position));
+							
+							var text:Entity = creator.createFloatingText("plop", 1);
+							var textPosition:Position = Position(text.get(Position));
+							textPosition.position.x = (pos1.position.x + pos2.position.x) / 2;
+							textPosition.position.y = (pos1.position.y + pos2.position.y) / 2;
+							
 							if (node1.membran.connected[constraint.entity1]) {
 								delete node1.membran.connected[constraint.entity1];
 							}
@@ -73,6 +81,7 @@ package ld28.systems {
 							
 							node1.membran.connections.splice(i, 1);
 							i--;
+							
 								//connection
 						}
 					}
