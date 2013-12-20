@@ -44,6 +44,10 @@ package ld28.systems {
 		
 		override public function update(time:Number):void {
 			var node1:MembranNode;
+			var pos1:Position;
+			var pos2:Position;
+			var text:Entity;
+			var textPosition:Position;
 			var connection:Entity;
 			var constraint:DistanceConstraint;
 			//var n:int = 0;
@@ -59,11 +63,11 @@ package ld28.systems {
 							//trace("plop");
 							constraint = connection.get(DistanceConstraint);
 							
-							var pos1:Position = Position(constraint.entity1.get(Position));
-							var pos2:Position = Position(constraint.entity2.get(Position));
+							pos1 = Position(constraint.entity1.get(Position));
+							pos2 = Position(constraint.entity2.get(Position));
 							
-							var text:Entity = creator.createFloatingText("plop", 1);
-							var textPosition:Position = Position(text.get(Position));
+							text = creator.createFloatingText("plop", 1);
+							textPosition = Position(text.get(Position));
 							textPosition.position.x = (pos1.position.x + pos2.position.x) / 2;
 							textPosition.position.y = (pos1.position.y + pos2.position.y) / 2;
 							
@@ -115,6 +119,14 @@ package ld28.systems {
 								
 								checkCompleteness(node1);
 								checkCompleteness(node2);
+								
+								pos1 = Position(node1.entity.get(Position));
+								pos2 = Position(node2.entity.get(Position));
+								
+								text = creator.createFloatingText("><", 1);
+								textPosition = Position(text.get(Position));
+								textPosition.position.x = (pos1.position.x + pos2.position.x) / 2;
+								textPosition.position.y = (pos1.position.y + pos2.position.y) / 2;
 								
 								if (node1.membran.connections.length >= 2) {
 									break;
