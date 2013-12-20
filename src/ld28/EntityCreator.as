@@ -22,6 +22,7 @@ package ld28 {
 	import ld28.components.EnergyProducer;
 	import ld28.components.EnergyStorage;
 	import ld28.components.EnergyStorageEmitter;
+	import ld28.components.GameState;
 	import ld28.components.Gravity;
 	import ld28.components.HasEnergyStorageView;
 	import ld28.components.Lifetime;
@@ -61,8 +62,8 @@ package ld28 {
 		
 		public function createGame():Entity {
 			var gameEntity:Entity = new Entity("game");
+			gameEntity.add(new GameState());
 			engine.addEntity(gameEntity);
-			
 			return gameEntity;
 		}
 		
@@ -244,7 +245,8 @@ package ld28 {
 		
 		public function createAttractor(radius:Number, strength:Number):Entity {
 			var entity:Entity = createRadar(radius);
-			
+			entity.remove(Display);
+			entity.remove(Collision);
 			var state:EntityState;
 			var fsm:EntityStateMachine = new EntityStateMachine(entity);
 			
@@ -258,14 +260,10 @@ package ld28 {
 			}
 			state = fsm.createState("inactive");
 			with (state) {
+				// empty
 			}
 			
 			with (entity) {
-				add(new Position(0, 0));
-				add(new Size(new Point(radius * 2, radius * 2)));
-				add(new Circle(radius));
-				//add(new Display(view));
-				add(new SpatialHashed());
 				add(new Attractor(fsm));
 			}
 			fsm.changeState("inactive");
