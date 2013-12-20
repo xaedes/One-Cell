@@ -4,9 +4,12 @@ package ld28.systems {
 	import ash.core.System;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.geom.Point;
 	import ld28.components.Display;
 	import ld28.components.Position;
+	import ld28.components.PositionTween;
 	import ld28.nodes.RenderNode;
+	import ld28.Utils;
 	
 	public class RenderSystem extends System {
 		public var container:DisplayObjectContainer;
@@ -41,12 +44,18 @@ package ld28.systems {
 			var displayObject:DisplayObject;
 			
 			for (node = nodes.head; node; node = node.next) {
+				var additional:Point = new Point(0, 0);
 				display = node.display;
 				displayObject = display.displayObject;
 				position = node.position;
 				
-				displayObject.x = position.position.x;
-				displayObject.y = position.position.y;
+				if (node.entity.has(PositionTween)) {
+					var positionTween:PositionTween = PositionTween(node.entity.get(PositionTween));
+					Utils.pointAdd(additional, positionTween.current);
+				}
+				
+				displayObject.x = position.position.x + additional.x;
+				displayObject.y = position.position.y + additional.y;
 			}
 		}
 		

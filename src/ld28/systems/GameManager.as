@@ -4,7 +4,10 @@ package ld28.systems {
 	import ash.core.Entity;
 	import ash.core.NodeList;
 	import ash.core.System;
+	import ld28.components.Display;
+	import ld28.components.Position;
 	import ld28.EntityCreator;
+	import ld28.graphics.TextView;
 	import ld28.nodes.GameStateNode;
 	
 	/**
@@ -54,7 +57,10 @@ package ld28.systems {
 						creator.createMembranPart();
 					}
 					creator.createPlayer();
-					var text:Entity = creator.createText("Controls: WASD Space");
+					var text:Entity = creator.createFloatingText("Controls: WASD Space", 2);
+					var position:Position = Position(text.get(Position));
+					position.position.x = 100;
+					position.position.y = 50;
 					game.gameState.state = "alive";
 					
 				} else if (game.gameState.state == "alive") {

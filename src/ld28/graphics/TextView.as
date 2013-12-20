@@ -16,8 +16,8 @@ package ld28.graphics {
 		
 		public function TextView(text:Text) {
 			textField = createTextField();
-			textField.x = 480;
-			textField.y = 5;
+			textField.x = 0;
+			textField.y = 0;
 			//textField.text
 			addChild(textField);
 			this.text = text;

@@ -8,6 +8,7 @@ package ld28.systems {
 	import ld28.Assets;
 	import ld28.components.Audio;
 	import ld28.components.Player;
+	import ld28.components.Position;
 	import ld28.EntityCreator;
 	import ld28.GameConfig;
 	import ld28.nodes.EnergyCollectingCollisionNode;
@@ -42,9 +43,18 @@ package ld28.systems {
 							creator.destroyEntity(energyParticle.entity);
 							
 							energyCollector.energyStorage.energy += energyParticle.energyStorage.energy;
-							if (energyCollector.entity.has(Player) && energyCollector.entity.has(Audio)) {
-								var audio:Audio = energyCollector.entity.get(Audio);
-								audio.play(Assets.CollectEnergy);
+							
+							if (energyCollector.entity.has(Player)) {
+								var text:Entity = creator.createFloatingText("+1", 1);
+								var textPosition:Position = Position(text.get(Position));
+								textPosition.position.x = energyCollector.position.position.x;
+								textPosition.position.y = energyCollector.position.position.y;
+								
+								if (energyCollector.entity.has(Audio)) {
+									
+									var audio:Audio = energyCollector.entity.get(Audio);
+									audio.play(Assets.CollectEnergy);
+								}
 							}
 						}
 					}

@@ -6,6 +6,7 @@ package ld28 {
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
 	import ld28.nodes.BreakingConnectionSystem;
+	import ld28.systems.AlphaTweenSystem;
 	import ld28.systems.AnchorSystem;
 	import ld28.systems.AttractorControllerSystem;
 	import ld28.systems.AttractorSystem;
@@ -24,6 +25,7 @@ package ld28 {
 	import ld28.systems.KeyboardMotionControlSystem;
 	import ld28.systems.MouseMotionControlSystem;
 	import ld28.systems.MovementSystem;
+	import ld28.systems.PositionTweenSystem;
 	import ld28.systems.RedrawingSystem;
 	import ld28.systems.RenderSystem;
 	import ld28.systems.SolidCollisionSystem;
@@ -93,6 +95,8 @@ package ld28 {
 			engine.addSystem(new AttractorSystem(), k++);
 			engine.addSystem(new AttractorControllerSystem(keyPoll), k++);
 			engine.addSystem(new GameManager(creator), k++);
+			engine.addSystem(new AlphaTweenSystem(), k++);
+			engine.addSystem(new PositionTweenSystem(), k++);
 		
 		}
 		

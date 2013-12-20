@@ -7,6 +7,7 @@ package ld28 {
 	import flash.geom.Point;
 	import flash.net.LocalConnection;
 	import flash.ui.Keyboard;
+	import ld28.components.AlphaTween;
 	import ld28.components.Anchor;
 	import ld28.components.Attractable;
 	import ld28.components.Attracting;
@@ -35,6 +36,7 @@ package ld28 {
 	import ld28.components.Mover;
 	import ld28.components.Player;
 	import ld28.components.Position;
+	import ld28.components.PositionTween;
 	import ld28.components.Radar;
 	import ld28.components.Redrawing;
 	import ld28.components.Size;
@@ -42,6 +44,7 @@ package ld28 {
 	import ld28.components.SpatialHashed;
 	import ld28.components.Text;
 	import ld28.components.Timer;
+	import ld28.easing.Easing;
 	import ld28.graphics.CircleView;
 	import ld28.graphics.EnergyParticleView;
 	import ld28.graphics.EnergyProducerView;
@@ -286,6 +289,17 @@ package ld28 {
 			}
 			
 			engine.addEntity(entity);
+			return entity;
+		}
+		
+		public function createFloatingText(text:String = "", lifetime:Number = 2, outfading_length:Number = 60):Entity {
+			var entity:Entity = createText(text);
+			with (entity) {
+				entity.add(new Timer());
+				entity.add(new Lifetime(lifetime));
+				entity.add(new AlphaTween(0, lifetime, Easing.easeInOutSine));
+				entity.add(new PositionTween(new Point(0, -outfading_length), lifetime, Easing.easeInOutSine));
+			}
 			return entity;
 		}
 	
