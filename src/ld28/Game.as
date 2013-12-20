@@ -3,6 +3,7 @@ package ld28 {
 	import ash.tick.FrameTickProvider;
 	import flash.display.DisplayObjectContainer;
 	import ld28.components.EnergyStorageWarning;
+	import ld28.components.TextViewAutosize;
 	import ld28.graphics.Redrawable;
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
@@ -32,6 +33,7 @@ package ld28 {
 	import ld28.systems.RenderSystem;
 	import ld28.systems.SolidCollisionSystem;
 	import ld28.systems.SpatialHashingSystem;
+	import ld28.systems.TextViewAutosizeSystem;
 	import ld28.systems.TimerSystem;
 	
 	/**
@@ -99,6 +101,7 @@ package ld28 {
 			engine.addSystem(new AlphaTweenSystem(), k++);
 			engine.addSystem(new PositionTweenSystem(), k++);
 			engine.addSystem(new EnergyStorageWarningSystem(creator), k++);
+			engine.addSystem(new TextViewAutosizeSystem(), k++);
 			engine.addSystem(new RenderSystem(container), k++);
 		
 		}

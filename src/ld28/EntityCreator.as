@@ -44,6 +44,7 @@ package ld28 {
 	import ld28.components.SolidCollision;
 	import ld28.components.SpatialHashed;
 	import ld28.components.Text;
+	import ld28.components.TextViewAutosize;
 	import ld28.components.Timer;
 	import ld28.easing.Easing;
 	import ld28.graphics.CircleView;
@@ -288,6 +289,9 @@ package ld28 {
 				add(textComponent);
 				add(new Display(view));
 				add(new Redrawing(view));
+				add(new Size(new Point()));
+				add(new TextViewAutosize(view));
+				
 			}
 			
 			engine.addEntity(entity);
@@ -302,6 +306,19 @@ package ld28 {
 				entity.add(new AlphaTween(0, lifetime, Easing.easeInOutSine));
 				entity.add(new PositionTween(new Point(0, -outfading_length), lifetime, Easing.easeInOutSine));
 			}
+			return entity;
+		}
+		
+		public function createCircle(radius:Number, color:uint = 0xFFFFFF, alpha:Number = 1):Entity {
+			var entity:Entity = new Entity();
+			var view:CircleView = new CircleView(radius, color, alpha);
+			with (entity) {
+				add(new Position(0, 0));
+				add(new Circle(radius));
+				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Display(view));
+			}
+			engine.addEntity(entity);
 			return entity;
 		}
 	

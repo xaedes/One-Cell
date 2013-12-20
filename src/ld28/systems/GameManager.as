@@ -4,11 +4,25 @@ package ld28.systems {
 	import ash.core.Entity;
 	import ash.core.NodeList;
 	import ash.core.System;
+	import flash.display.DisplayObject;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
+	import flash.utils.Dictionary;
+	import ld28.components.AlphaTween;
+	import ld28.components.Anchor;
+	import ld28.components.Circle;
+	import ld28.components.Collision;
 	import ld28.components.Display;
+	import ld28.components.Lifetime;
+	import ld28.components.Player;
 	import ld28.components.Position;
+	import ld28.components.Redrawing;
+	import ld28.components.Size;
+	import ld28.components.SpatialHashed;
+	import ld28.components.Timer;
 	import ld28.EntityCreator;
+	import ld28.graphics.CircleView;
 	import ld28.graphics.TextView;
 	import ld28.nodes.GameStateNode;
 	
@@ -19,6 +33,7 @@ package ld28.systems {
 	public class GameManager extends System {
 		private var creator:EntityCreator;
 		private var game:GameStateNode;
+		private var entities:Dictionary = new Dictionary();
 		
 		public function GameManager(creator:EntityCreator) {
 			this.creator = creator;
@@ -42,6 +57,15 @@ package ld28.systems {
 		}
 		
 		override public function update(time:Number):void {
+			var display:Display;
+			var position:Position;
+			var textView:TextView;
+			var circleView:CircleView;
+			var collision:Collision;
+			var entity:Entity;
+			var size:Size;
+			var circle:Circle;
+			var format:TextFormat;
 			if (game) {
 				if (game.gameState.state == "") {
 					//init
@@ -51,7 +75,7 @@ package ld28.systems {
 						creator.createEnergyParticle();
 					}
 					// spawn energy producers
-					for (i = 0; i < 10; i++) {
+					for (i = 0; i < 5; i++) {
 						creator.createEnergyProducer();
 					}
 					// spawn membran parts
@@ -59,18 +83,81 @@ package ld28.systems {
 						creator.createMembranPart();
 					}
 					creator.createPlayer();
-					var text:Entity = creator.createText("Controls: WASD Space");
-					var position:Position = Position(text.get(Position));
+					
+					entities["controls"] = creator.createText("Controls: W,A,S,D,Space");
+					position = Position(entities["controls"].get(Position));
 					position.position.x = 100;
 					position.position.y = 50;
-					var display:Display = Display(text.get(Display));
-					var textView:TextView = TextView(display.displayObject);
+					display = Display(entities["controls"].get(Display));
+					textView = TextView(display.displayObject);
 					textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
 					textView.textField.autoSize = TextFieldAutoSize.LEFT;
+					
+					entities["move_here_text"] = creator.createText("Move here");
+					entities["move_here_text"].add(new Collision());
+					entities["move_here_text"].add(new SpatialHashed());
+					position = Position(entities["move_here_text"].get(Position));
+					position.position.x = 200;
+					position.position.y = 150;
+					size = Size(entities["move_here_text"].get(Size));
+					display = Display(entities["move_here_text"].get(Display));
+					textView = TextView(display.displayObject);
+					textView.textField.y -= 10;
+					
+					entities["move_here_circle"] = creator.createCircle(10, 0xffffff, 0.1);
+					entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
+					display = Display(entities["move_here_circle"].get(Display));
+					entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
 					game.gameState.state = "alive";
 					
 				} else if (game.gameState.state == "alive") {
-					
+					if (entities["controls"]) {
+						display = Display(entities["controls"].get(Display));
+						display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
+					}
+					if (entities["move_here_text"]) {
+						display = Display(entities["move_here_text"].get(Display));
+						display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
+						
+						if (entities["move_here_circle"]) {
+							size = Size(entities["move_here_text"].get(Size));
+							circle = Circle(entities["move_here_circle"].get(Circle));
+							circle.radius = size.size.x / 2;
+							display = Display(entities["move_here_circle"].get(Display));
+							circleView = CircleView(display.displayObject);
+							circleView._radius = circle.radius;
+						}
+						
+						collision = Collision(entities["move_here_text"].get(Collision));
+						if (collision) {
+							for each (entity in collision.collidingEntities) {
+								if (entity.has(Player)) {
+									var tmp:Entity = creator.createFloatingText("Good job!", 2);
+									display = Display(tmp.get(Display));
+									textView = TextView(display.displayObject);
+									
+									format = new TextFormat();
+									format.color = 0x52B600;
+									format.size = 30;
+									textView.textField.defaultTextFormat = format;
+									
+									tmp.add(new Anchor(entities["move_here_text"]));
+									entities["move_here_text"].remove(Collision);
+									
+									entities["move_here_circle"].add(new Lifetime(5));
+									entities["move_here_circle"].add(new Timer());
+									entities["move_here_circle"].add(new AlphaTween(0, 5));
+									
+									entities["move_here_text"].add(new Lifetime(5));
+									entities["move_here_text"].add(new Timer());
+									entities["move_here_text"].add(new AlphaTween(0, 5));
+									
+									delete entities["move_here_text"];
+									delete entities["move_here_circle"];
+								}
+							}
+						}
+					}
 				}
 			}
 		}

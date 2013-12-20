@@ -30,10 +30,12 @@ package ld28.systems {
 		}
 		
 		private function addToDisplay(node:RenderNode):void {
+			node.display.container = container;
 			container.addChild(node.display.displayObject);
 		}
 		
 		private function removeFromDisplay(node:RenderNode):void {
+			node.display.container = null;
 			container.removeChild(node.display.displayObject);
 		}
 		
