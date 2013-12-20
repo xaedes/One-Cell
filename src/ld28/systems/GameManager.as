@@ -54,7 +54,7 @@ package ld28.systems {
 						creator.createMembranPart();
 					}
 					creator.createPlayer();
-					
+					var text:Entity = creator.createText("Controls: WASD Space");
 					game.gameState.state = "alive";
 					
 				} else if (game.gameState.state == "alive") {

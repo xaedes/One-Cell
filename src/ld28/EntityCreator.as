@@ -3,6 +3,7 @@ package ld28 {
 	import ash.core.Entity;
 	import ash.fsm.EntityState;
 	import ash.fsm.EntityStateMachine;
+	import flash.events.TextEvent;
 	import flash.geom.Point;
 	import flash.net.LocalConnection;
 	import flash.ui.Keyboard;
@@ -39,6 +40,7 @@ package ld28 {
 	import ld28.components.Size;
 	import ld28.components.SolidCollision;
 	import ld28.components.SpatialHashed;
+	import ld28.components.Text;
 	import ld28.components.Timer;
 	import ld28.graphics.CircleView;
 	import ld28.graphics.EnergyParticleView;
@@ -46,6 +48,7 @@ package ld28 {
 	import ld28.graphics.LineView;
 	import ld28.graphics.MembranPartView;
 	import ld28.graphics.MoverView;
+	import ld28.graphics.TextView;
 	
 	public class EntityCreator {
 		private var engine:Engine;
@@ -267,6 +270,22 @@ package ld28 {
 				add(new Attractor(fsm));
 			}
 			fsm.changeState("inactive");
+			return entity;
+		}
+		
+		public function createText(text:String = ""):Entity {
+			var entity:Entity = new Entity();
+			
+			var textComponent:Text = new Text(text);
+			var view:TextView = new TextView(textComponent);
+			with (entity) {
+				add(new Position(0, 0));
+				add(textComponent);
+				add(new Display(view));
+				add(new Redrawing(view));
+			}
+			
+			engine.addEntity(entity);
 			return entity;
 		}
 	
