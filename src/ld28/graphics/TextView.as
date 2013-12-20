@@ -33,6 +33,7 @@ package ld28.graphics {
 			format.align = TextFormatAlign.CENTER;
 			format.bold = true;
 			format.color = 0xFFFFFF;
+			//format.color = 0xFF0000;
 			format.font = "Helvetica";
 			format.size = 18;
 			tf.defaultTextFormat = format;

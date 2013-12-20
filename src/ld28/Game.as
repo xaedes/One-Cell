@@ -2,6 +2,7 @@ package ld28 {
 	import ash.core.Engine;
 	import ash.tick.FrameTickProvider;
 	import flash.display.DisplayObjectContainer;
+	import ld28.components.EnergyStorageWarning;
 	import ld28.graphics.Redrawable;
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
@@ -18,6 +19,7 @@ package ld28 {
 	import ld28.systems.EnergyProducerSystem;
 	import ld28.systems.EnergyStorageEmitterSystem;
 	import ld28.systems.EnergyStorageViewSystem;
+	import ld28.systems.EnergyStorageWarningSystem;
 	import ld28.systems.GameManager;
 	import ld28.systems.GravitySystem;
 	import ld28.systems.LifetimeSystem;
@@ -72,7 +74,7 @@ package ld28 {
 			var spatialHashingSystem:SpatialHashingSystem = new SpatialHashingSystem(config, 10);
 			var k:int = 0;
 			engine.addSystem(new RedrawingSystem(), k++);
-			engine.addSystem(new RenderSystem(container), k++);
+			engine.addSystem(new AnchorSystem(), k++);
 			engine.addSystem(new MovementSystem(config), k++);
 			engine.addSystem(new GravitySystem(), k++);
 			engine.addSystem(new KeyboardMotionControlSystem(keyPoll), k++);
@@ -84,7 +86,6 @@ package ld28 {
 			engine.addSystem(new EnergyCollectingCollisionSystem(creator, config), k++);
 			engine.addSystem(new SolidCollisionSystem(), k++);
 			engine.addSystem(new EnergyStorageEmitterSystem(creator), k++);
-			engine.addSystem(new AnchorSystem(), k++);
 			engine.addSystem(new AudioSystem(), k++);
 			engine.addSystem(new EnergyProducerSystem(), k++);
 			engine.addSystem(new MembranSystem(creator), k++);
@@ -97,6 +98,8 @@ package ld28 {
 			engine.addSystem(new GameManager(creator), k++);
 			engine.addSystem(new AlphaTweenSystem(), k++);
 			engine.addSystem(new PositionTweenSystem(), k++);
+			engine.addSystem(new EnergyStorageWarningSystem(creator), k++);
+			engine.addSystem(new RenderSystem(container), k++);
 		
 		}
 		

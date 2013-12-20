@@ -24,6 +24,7 @@ package ld28 {
 	import ld28.components.EnergyProducer;
 	import ld28.components.EnergyStorage;
 	import ld28.components.EnergyStorageEmitter;
+	import ld28.components.EnergyStorageWarning;
 	import ld28.components.GameState;
 	import ld28.components.Gravity;
 	import ld28.components.HasEnergyStorageView;
@@ -107,6 +108,7 @@ package ld28 {
 				add(new SolidCollision(0.9));
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
+				add(new EnergyStorageWarning(0.3, 2, 1));
 				
 			}
 			

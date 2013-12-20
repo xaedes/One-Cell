@@ -51,7 +51,9 @@ package ld28.systems {
 				
 				if (node.entity.has(PositionTween)) {
 					var positionTween:PositionTween = PositionTween(node.entity.get(PositionTween));
-					Utils.pointAdd(additional, positionTween.current);
+					if (positionTween.current) {
+						Utils.pointAdd(additional, positionTween.current);
+					}
 				}
 				
 				displayObject.x = position.position.x + additional.x;

@@ -64,7 +64,6 @@ package ld28.systems {
 					position.position.x = 100;
 					position.position.y = 50;
 					var display:Display = Display(text.get(Display));
-					//display.displayObject.
 					var textView:TextView = TextView(display.displayObject);
 					textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
 					textView.textField.autoSize = TextFieldAutoSize.LEFT;
