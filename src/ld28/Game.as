@@ -17,6 +17,7 @@ package ld28 {
 	import ld28.systems.EnergyProducerSystem;
 	import ld28.systems.EnergyStorageEmitterSystem;
 	import ld28.systems.EnergyStorageViewSystem;
+	import ld28.systems.GameManager;
 	import ld28.systems.GravitySystem;
 	import ld28.systems.LifetimeSystem;
 	import ld28.systems.MembranSystem;
@@ -88,6 +89,7 @@ package ld28 {
 			engine.addSystem(new LifetimeSystem(creator), k++);
 			engine.addSystem(new AttractorSystem(), k++);
 			engine.addSystem(new AttractorControllerSystem(keyPoll), k++);
+			engine.addSystem(new GameManager(), k++);
 			
 			// create entities
 			creator.createGame();
