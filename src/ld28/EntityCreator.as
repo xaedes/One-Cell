@@ -167,8 +167,8 @@ package ld28 {
 				add(new EnergyStorage(_maxEnergy, Utils.randomRange(0, _maxEnergy)));
 				add(new Collision());
 				//add(new EnergyProducer(0.1, 0.03));
-				add(new EnergyProducer(0.1, 0.1));
-				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 1, 1, 5));
+				add(new EnergyProducer(0.1, 0.2));
+				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 1, 2, 5));
 				add(new HasEnergyStorageView(energyProducerView.energyStorageView));
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new SolidCollision(0.05));

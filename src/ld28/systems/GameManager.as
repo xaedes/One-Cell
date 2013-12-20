@@ -67,21 +67,17 @@ package ld28.systems {
 			var circle:Circle;
 			var format:TextFormat;
 			if (game) {
+				if (entities["controls"]) {
+					display = Display(entities["controls"].get(Display));
+					display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
+				}
+				if (entities["move_here_text"]) {
+					display = Display(entities["move_here_text"].get(Display));
+					display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
+				}
 				if (game.gameState.state == "") {
 					//init
-					var i:int;
-					// spawn energy particles
-					for (i = 0; i < 100; i++) {
-						creator.createEnergyParticle();
-					}
-					// spawn energy producers
-					for (i = 0; i < 5; i++) {
-						creator.createEnergyProducer();
-					}
-					// spawn membran parts
-					for (i = 0; i < 100; i++) {
-						creator.createMembranPart();
-					}
+					
 					creator.createPlayer();
 					
 					entities["controls"] = creator.createText("Controls: W,A,S,D,Space");
@@ -108,16 +104,10 @@ package ld28.systems {
 					entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
 					display = Display(entities["move_here_circle"].get(Display));
 					entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
-					game.gameState.state = "alive";
+					game.gameState.state = "move_here";
 					
-				} else if (game.gameState.state == "alive") {
-					if (entities["controls"]) {
-						display = Display(entities["controls"].get(Display));
-						display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
-					}
+				} else if (game.gameState.state == "move_here") {
 					if (entities["move_here_text"]) {
-						display = Display(entities["move_here_text"].get(Display));
-						display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
 						
 						if (entities["move_here_circle"]) {
 							size = Size(entities["move_here_text"].get(Size));
@@ -154,11 +144,28 @@ package ld28.systems {
 									
 									delete entities["move_here_text"];
 									delete entities["move_here_circle"];
+									
+									var i:int;
+									// spawn energy particles
+									for (i = 0; i < 10; i++) {
+										creator.createEnergyParticle();
+									}
+									// spawn energy producers
+									for (i = 0; i < 2; i++) {
+										creator.createEnergyProducer();
+									}
+									// spawn membran parts
+									for (i = 0; i < 20; i++) {
+										creator.createMembranPart();
+									}
+									game.gameState.state = "alive";
 								}
 							}
 						}
 					}
+				} else if (game.gameState.state == "alive") {
 				}
+				
 			}
 		}
 	
