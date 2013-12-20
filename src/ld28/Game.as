@@ -62,6 +62,9 @@ package ld28 {
 			config.height = height;
 			creator = new EntityCreator(engine, config);
 			
+			// create game entity
+			creator.createGame();
+			
 			// add systems 
 			// todo: add priorites (CollisionSystem < SolidCollisionSystem, CollisionSystem < EnergyCollectingCollisionSystem)
 			var spatialHashingSystem:SpatialHashingSystem = new SpatialHashingSystem(config, 10);
@@ -89,25 +92,8 @@ package ld28 {
 			engine.addSystem(new LifetimeSystem(creator), k++);
 			engine.addSystem(new AttractorSystem(), k++);
 			engine.addSystem(new AttractorControllerSystem(keyPoll), k++);
-			engine.addSystem(new GameManager(), k++);
-			
-			// create entities
-			creator.createGame();
-			
-			var i:int;
-			// spawn energy particles
-			for (i = 0; i < 100; i++) {
-				creator.createEnergyParticle();
-			}
-			// spawn energy producers
-			for (i = 0; i < 10; i++) {
-				creator.createEnergyProducer();
-			}
-			// spawn membran parts
-			for (i = 0; i < 100; i++) {
-				creator.createMembranPart();
-			}
-			creator.createPlayer();
+			engine.addSystem(new GameManager(creator), k++);
+		
 		}
 		
 		public function start():void {
