@@ -5,6 +5,7 @@ package ld28.systems {
 	import ash.core.NodeList;
 	import ash.core.System;
 	import flash.display.DisplayObject;
+	import flash.geom.Point;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
@@ -90,8 +91,6 @@ package ld28.systems {
 					textView.textField.autoSize = TextFieldAutoSize.LEFT;
 					
 					entities["move_here_text"] = creator.createText("Move here");
-					entities["move_here_text"].add(new Collision());
-					entities["move_here_text"].add(new SpatialHashed());
 					position = Position(entities["move_here_text"].get(Position));
 					position.position.x = 200;
 					position.position.y = 150;
@@ -101,6 +100,8 @@ package ld28.systems {
 					textView.textField.y -= 10;
 					
 					entities["move_here_circle"] = creator.createCircle(10, 0xffffff, 0.1);
+					entities["move_here_circle"].add(new Collision());
+					entities["move_here_circle"].add(new SpatialHashed());
 					entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
 					display = Display(entities["move_here_circle"].get(Display));
 					entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
@@ -113,52 +114,59 @@ package ld28.systems {
 							size = Size(entities["move_here_text"].get(Size));
 							circle = Circle(entities["move_here_circle"].get(Circle));
 							circle.radius = size.size.x / 2;
+							size = Size(entities["move_here_circle"].get(Size));
+							size.size.x = circle.radius * 2;
+							size.size.y = circle.radius * 2;
 							display = Display(entities["move_here_circle"].get(Display));
 							circleView = CircleView(display.displayObject);
 							circleView._radius = circle.radius;
 						}
 						
-						collision = Collision(entities["move_here_text"].get(Collision));
+						collision = Collision(entities["move_here_circle"].get(Collision));
 						if (collision) {
 							for each (entity in collision.collidingEntities) {
 								if (entity.has(Player)) {
-									var tmp:Entity = creator.createFloatingText("Good job!", 2);
-									display = Display(tmp.get(Display));
-									textView = TextView(display.displayObject);
-									
-									format = new TextFormat();
-									format.color = 0x52B600;
-									format.size = 30;
-									textView.textField.defaultTextFormat = format;
-									
-									tmp.add(new Anchor(entities["move_here_text"]));
-									entities["move_here_text"].remove(Collision);
-									
-									entities["move_here_circle"].add(new Lifetime(5));
-									entities["move_here_circle"].add(new Timer());
-									entities["move_here_circle"].add(new AlphaTween(0, 5));
-									
-									entities["move_here_text"].add(new Lifetime(5));
-									entities["move_here_text"].add(new Timer());
-									entities["move_here_text"].add(new AlphaTween(0, 5));
-									
-									delete entities["move_here_text"];
-									delete entities["move_here_circle"];
-									
-									var i:int;
-									// spawn energy particles
-									for (i = 0; i < 10; i++) {
-										creator.createEnergyParticle();
+									if ((Circle(entity.get(Circle)).radius + Circle(entities["move_here_circle"].get(Circle)).radius) >= Point.distance(Position(entity.get(Position)).position, Position(entities["move_here_circle"].get(Position)).position)) {
+										
+										var tmp:Entity = creator.createFloatingText("Good job!", 2);
+										display = Display(tmp.get(Display));
+										textView = TextView(display.displayObject);
+										
+										format = new TextFormat();
+										format.color = 0x52B600;
+										format.size = 30;
+										textView.textField.defaultTextFormat = format;
+										
+										tmp.add(new Anchor(entities["move_here_text"]));
+										entities["move_here_circle"].remove(Collision);
+										
+										entities["move_here_circle"].add(new Lifetime(5));
+										entities["move_here_circle"].add(new Timer());
+										entities["move_here_circle"].add(new AlphaTween(0, 5));
+										
+										entities["move_here_text"].add(new Lifetime(5));
+										entities["move_here_text"].add(new Timer());
+										entities["move_here_text"].add(new AlphaTween(0, 5));
+										
+										delete entities["move_here_text"];
+										delete entities["move_here_circle"];
+										
+										var i:int;
+										// spawn energy particles
+										for (i = 0; i < 10; i++) {
+											creator.createEnergyParticle();
+										}
+										// spawn energy producers
+										for (i = 0; i < 2; i++) {
+											creator.createEnergyProducer();
+										}
+										// spawn membran parts
+										for (i = 0; i < 20; i++) {
+											creator.createMembranPart();
+										}
+										game.gameState.state = "alive";
+										
 									}
-									// spawn energy producers
-									for (i = 0; i < 2; i++) {
-										creator.createEnergyProducer();
-									}
-									// spawn membran parts
-									for (i = 0; i < 20; i++) {
-										creator.createMembranPart();
-									}
-									game.gameState.state = "alive";
 								}
 							}
 						}
