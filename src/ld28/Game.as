@@ -2,18 +2,15 @@ package ld28 {
 	import ash.core.Engine;
 	import ash.tick.FrameTickProvider;
 	import flash.display.DisplayObjectContainer;
-	import ld28.components.EnergyStorageWarning;
-	import ld28.components.TextViewAutosize;
-	import ld28.graphics.Redrawable;
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
-	import ld28.systems.BreakingConnectionSystem;
 	import ld28.systems.AlphaTweenSystem;
 	import ld28.systems.AnchorSystem;
 	import ld28.systems.AttractorControllerSystem;
 	import ld28.systems.AttractorSystem;
 	import ld28.systems.AudioSystem;
-	import ld28.systems.CollisionSystem;
+	import ld28.systems.AutoResizingRectViewSystem;
+	import ld28.systems.BreakingConnectionSystem;
 	import ld28.systems.CollisionWithSpatialHashingSystem;
 	import ld28.systems.DistanceConstraintSystem;
 	import ld28.systems.EnergyCollectingCollisionSystem;
@@ -23,10 +20,10 @@ package ld28 {
 	import ld28.systems.EnergyStorageWarningSystem;
 	import ld28.systems.GameManager;
 	import ld28.systems.GravitySystem;
-	import ld28.systems.LifetimeSystem;
-	import ld28.systems.MembranSystem;
 	import ld28.systems.KeyboardMotionControlSystem;
-	import ld28.systems.MouseMotionControlSystem;
+	import ld28.systems.LifetimeSystem;
+	import ld28.systems.MembranChainSpatialUpdateSystem;
+	import ld28.systems.MembranSystem;
 	import ld28.systems.MovementSystem;
 	import ld28.systems.PositionTweenSystem;
 	import ld28.systems.RedrawingSystem;
@@ -102,6 +99,8 @@ package ld28 {
 			engine.addSystem(new PositionTweenSystem(), k++);
 			engine.addSystem(new EnergyStorageWarningSystem(creator), k++);
 			engine.addSystem(new TextViewAutosizeSystem(), k++);
+			engine.addSystem(new MembranChainSpatialUpdateSystem(), k++);
+			engine.addSystem(new AutoResizingRectViewSystem(), k++);
 			engine.addSystem(new RenderSystem(container), k++);
 		
 		}

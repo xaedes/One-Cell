@@ -5,6 +5,7 @@ package ld28 {
 	import ash.fsm.EntityStateMachine;
 	import flash.events.TextEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.net.LocalConnection;
 	import flash.ui.Keyboard;
 	import ld28.components.AlphaTween;
@@ -14,7 +15,9 @@ package ld28 {
 	import ld28.components.Attractor;
 	import ld28.components.AttractorController;
 	import ld28.components.Audio;
+	import ld28.components.AutoResizingRectView;
 	import ld28.components.Breakable;
+	import ld28.components.CanBeContainedInMembranChains;
 	import ld28.components.Circle;
 	import ld28.components.Collision;
 	import ld28.components.Display;
@@ -32,6 +35,7 @@ package ld28 {
 	import ld28.components.Mass;
 	import ld28.components.Membran;
 	import ld28.components.MembranChain;
+	import ld28.components.MembranChainSpatialUpdate;
 	import ld28.components.Motion;
 	import ld28.components.KeyboardMotionControls;
 	import ld28.components.MouseMotionControls;
@@ -54,6 +58,7 @@ package ld28 {
 	import ld28.graphics.LineView;
 	import ld28.graphics.MembranPartView;
 	import ld28.graphics.MoverView;
+	import ld28.graphics.RectView;
 	import ld28.graphics.TextView;
 	
 	public class EntityCreator {
@@ -92,7 +97,7 @@ package ld28 {
 			with (entity) {
 				add(new Player());
 				add(new Position(pos.x, pos.y));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Display(moverView));
 				//add(new Mover(0.001));
@@ -111,7 +116,7 @@ package ld28 {
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
 				add(new EnergyStorageWarning(0.3, 2, 1));
-				
+				add(new CanBeContainedInMembranChains());
 			}
 			
 			engine.addEntity(entity);
@@ -129,7 +134,7 @@ package ld28 {
 			var view:EnergyParticleView = new EnergyParticleView(entity);
 			with (entity) {
 				add(new Position(pos.x, pos.y));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Redrawing(view));
 				add(new Display(view));
@@ -143,7 +148,8 @@ package ld28 {
 				add(new Timer());
 				add(new Lifetime(5));
 				add(new Attractable(-1));
-					//add(new Gravity(new Point(config.width / 2, 3 * config.height / 4), 5));
+				//add(new Gravity(new Point(config.width / 2, 3 * config.height / 4), 5));
+				add(new CanBeContainedInMembranChains());
 			}
 			
 			engine.addEntity(entity);
@@ -161,7 +167,7 @@ package ld28 {
 			var energyProducerView:EnergyProducerView = new EnergyProducerView(radius);
 			with (entity) {
 				add(new Position(pos.x, pos.y));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Display(energyProducerView));
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.995));
@@ -177,6 +183,7 @@ package ld28 {
 				add(new SpatialHashed());
 				add(new Attractable(1));
 				add(new Gravity(new Point(config.width / 2, 1 * config.height / 4), 3));
+				add(new CanBeContainedInMembranChains());
 			}
 			engine.addEntity(entity);
 			return entity;
@@ -189,7 +196,7 @@ package ld28 {
 			var view:CircleView = new CircleView(radius, 0xFFFFFF, 0.1);
 			with (entity) {
 				add(new Position(0, 0));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Display(view));
 				add(new Collision());
@@ -215,7 +222,7 @@ package ld28 {
 			var membranPartView:MembranPartView = new MembranPartView(radius);
 			with (entity) {
 				add(new Position(pos.x, pos.y));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new SpatialHashed());
 				add(new Mass(radius * radius * Math.PI * density));
@@ -226,6 +233,7 @@ package ld28 {
 				add(new Radar(radar));
 				add(new Membran(chain));
 				add(new Attractable(1));
+				add(new CanBeContainedInMembranChains());
 			}
 			
 			MembranChain(chain.get(MembranChain)).addPart(entity);
@@ -236,8 +244,17 @@ package ld28 {
 		
 		public function createMembranChain():Entity {
 			var entity:Entity = new Entity();
+			var view:RectView = new RectView(null, 0xFFFFFF, 0.1);
 			with (entity) {
 				add(new MembranChain());
+				add(new Position(0, 0));
+				add(new Size(new Point(), Size.ALIGN_CENTER_CENTER));
+				add(new MembranChainSpatialUpdate());
+				add(new Collision());
+				add(new SpatialHashed());
+				add(new Display(view));
+				add(new Redrawing(view));
+				add(new AutoResizingRectView(view));
 			}
 			engine.addEntity(entity);
 			return entity;
@@ -303,7 +320,7 @@ package ld28 {
 				add(textComponent);
 				add(new Display(view));
 				add(new Redrawing(view));
-				add(new Size(new Point()));
+				add(new Size(new Point(), Size.ALIGN_TOP_LEFT));
 				add(new TextViewAutosize(view));
 				
 			}
@@ -329,7 +346,7 @@ package ld28 {
 			with (entity) {
 				add(new Position(0, 0));
 				add(new Circle(radius));
-				add(new Size(new Point(radius * 2, radius * 2)));
+				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Display(view));
 			}
 			engine.addEntity(entity);
