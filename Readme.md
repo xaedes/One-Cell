@@ -51,6 +51,8 @@ Controls: WASD
 * add goals
 ** put all things in one big ring of the blue membrane
 ** build rings of specific length
+* membran can store and collect energy
+** when membran has more then 0 energy then connections have more strength
 
 * upgrades für chloroplasts
 
