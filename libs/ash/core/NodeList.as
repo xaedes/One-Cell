@@ -111,6 +111,16 @@ package ash.core
 			return head == null;
 		}
 		
+		public function get size() : int 
+		{
+			var result : int = 0;
+			for( var node : Node = head; node; node = node.next ) {
+				result += 1;
+			}
+			return result;
+		}
+		
+		
 		/**
 		 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 		 */
