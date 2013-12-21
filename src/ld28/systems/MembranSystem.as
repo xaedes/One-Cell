@@ -172,7 +172,7 @@ package ld28.systems {
 			}
 		}
 		
-		function cleanMembranFromConnection(membranEntity:Entity, connectionEntity:Entity):void {
+		internal function cleanMembranFromConnection(membranEntity:Entity, connectionEntity:Entity):void {
 			if (!membranEntity.has(Membran) || !connectionEntity.has(DistanceConstraint)) {
 				return;
 			}
@@ -217,7 +217,7 @@ package ld28.systems {
 				if (current) {
 					if (current.has(Membran)) {
 						
-						if (callback)
+						if (callback != null)
 							callback.call(null, current, accumulator, results.visited);
 						
 						membran = current.get(Membran);
@@ -247,7 +247,7 @@ package ld28.systems {
 			return results;
 		}
 		
-		function refreshMembranChains(entity:Entity):void {
+		internal function refreshMembranChains(entity:Entity):void {
 			// traverse to get info about chain
 			var result:TraverseResult = traverseMembranChain(entity, null, null);
 			
@@ -281,7 +281,7 @@ package ld28.systems {
 				}, null);
 		}
 		
-		function checkCompleteness(node:MembranNode):void {
+		internal function checkCompleteness(node:MembranNode):void {
 			if (node.membran.connections.length == 2) {
 				
 				var keys:Array = Utils.getKeys(node.membran.connected);

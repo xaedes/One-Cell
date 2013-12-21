@@ -60,7 +60,7 @@ package ld28.systems {
 			game = null;
 		}
 		
-		function state_init(time:Number):void {
+		internal function state_init(time:Number):void {
 			var position:Position;
 			var display:Display;
 			var textView:TextView;
@@ -95,7 +95,7 @@ package ld28.systems {
 			game.gameState.state = "move_here";
 		}
 		
-		function state_move_here(time:Number):void {
+		internal function state_move_here(time:Number):void {
 			var size:Size;
 			var circle:Circle;
 			var display:Display;
@@ -172,7 +172,7 @@ package ld28.systems {
 		
 		}
 		
-		function state_alive(time:Number):void {
+		internal function state_alive(time:Number):void {
 		/* empty */
 		}
 		
