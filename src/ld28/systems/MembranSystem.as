@@ -12,6 +12,8 @@ package ld28.systems {
 	import ld28.components.Collision;
 	import ld28.components.Display;
 	import ld28.components.DistanceConstraint;
+	import ld28.components.Membran;
+	import ld28.components.MembranChain;
 	import ld28.components.Player;
 	import ld28.components.Position;
 	import ld28.components.Radar;
@@ -43,6 +45,7 @@ package ld28.systems {
 		}
 		
 		override public function update(time:Number):void {
+			var tmpNode:MembranNode;
 			var node1:MembranNode;
 			var pos1:Position;
 			var pos2:Position;
@@ -50,27 +53,29 @@ package ld28.systems {
 			var textPosition:Position;
 			var connection:Entity;
 			var constraint:DistanceConstraint;
-			//var n:int = 0;
+			var membranChain1:MembranChain;
+			var membranChain2:MembranChain;
+			
+			// deal with broken connections
 			for (node1 = nodes.head; node1; node1 = node1.next) {
-				// deal with broken connections
-				
-				for (var i:int = 0; i < node1.membran.connections.length; i++) {
+				for (var i:int = 0; i < int(Math.min(2, node1.membran.connections.length)); i++) {
 					connection = Entity(node1.membran.connections[i]);
 					if (connection.has(Breakable)) {
 						var breakable:Breakable = connection.get(Breakable);
 						if (breakable.broken) {
-							// remove connection
-							//trace("plop");
+							// get constraint
 							constraint = connection.get(DistanceConstraint);
 							
 							pos1 = Position(constraint.entity1.get(Position));
 							pos2 = Position(constraint.entity2.get(Position));
 							
+							// create floating text "plop"
 							text = creator.createFloatingText("plop", 1);
 							textPosition = Position(text.get(Position));
 							textPosition.position.x = (pos1.position.x + pos2.position.x) / 2;
 							textPosition.position.y = (pos1.position.y + pos2.position.y) / 2;
 							
+							// remove connection
 							if (node1.membran.connected[constraint.entity1]) {
 								delete node1.membran.connected[constraint.entity1];
 							}
@@ -78,35 +83,74 @@ package ld28.systems {
 								delete node1.membran.connected[constraint.entity2];
 							}
 							creator.destroyEntity(connection);
+							
+							// remove straigthener
 							if (node1.membran.straigthener) {
 								creator.destroyEntity(node1.membran.straigthener);
+								node1.membran.connections.splice(node1.membran.connections.length - 1, 1);
 								node1.membran.straigthener = null;
 							}
 							
+							//remove connection
 							node1.membran.connections.splice(i, 1);
 							i--;
 							
-								//connection
+								// refresh membran chain infos
+								//this.refreshMembranChains(constraint.entity1);
+								//this.refreshMembranChains(constraint.entity2);
 						}
 					}
 				}
-				
+			}
+			
+			// try to add more
+			for (node1 = nodes.head; node1; node1 = node1.next) {
 				if (node1.membran.connections.length < 2) {
-					// try to add more
+					// not fully connected
 					var radarCollisions:Collision = node1.radar.entity.get(Collision);
 					for each (var entity:Entity in radarCollisions.collidingEntities) {
 						//n++;
 						if (entity == node1.entity) {
+							// skip collision with itself
 							continue;
 						}
+						// get colliding MembranNode
 						var node2:MembranNode = MembranNode(family.entities[entity]);
 						if (node2) {
+							// node2 = colliding MembranNode
+							
 							if (node1.membran.connected[entity]) {
+								// no self connections
 								continue;
 							}
 							if (node2.membran.connections.length < 2) {
-								//trace("foo");
+								// other node is not fully connected
+								// (try to) detect triangle
+								var triangle = false;
+								for (var foo:Object in node1.membran.connected) {
+									tmpNode = MembranNode(family.entities[foo]);
+									if (tmpNode.membran.connected[node2.entity]) {
+										triangle = true;
+									}
+								}
+								//no triangles
+								if (triangle) {
+									continue;
+								}
+								//
+								//join membranChain
+								//if (Utils.getKeys(node1.membranChain.partEntities).length == 0) {
+								//node1.membranChain.partEntities[node1.entity] = node1.entity;
+								//}
+								//if (Utils.getKeys(node2.membranChain.partEntities).length == 0) {
+								//node2.membranChain.partEntities[node2.entity] = node2.entity;
+								//}
+								//membranChain1 = node1.membranChain;
+								//membranChain2 = node2.membranChain;
+								//trace(membranChain1 == membranChain2);
+								//MembranChain.join(membranChain1, membranChain2);
 								
+								// create connection
 								connection = creator.createConnection(node1.entity, node2.entity);
 								var breakable:Breakable = connection.get(Breakable);
 								breakable.maximumDistance *= 1.5;
@@ -117,9 +161,11 @@ package ld28.systems {
 								node1.membran.connected[node2.entity] = connection;
 								node2.membran.connected[node1.entity] = connection;
 								
+								// check for complete nodes and add straigtheners if so
 								checkCompleteness(node1);
 								checkCompleteness(node2);
 								
+								// create floating text "><"
 								pos1 = Position(node1.entity.get(Position));
 								pos2 = Position(node2.entity.get(Position));
 								
@@ -128,6 +174,7 @@ package ld28.systems {
 								textPosition.position.x = (pos1.position.x + pos2.position.x) / 2;
 								textPosition.position.y = (pos1.position.y + pos2.position.y) / 2;
 								
+								//if node1 is fully connected dont look for more
 								if (node1.membran.connections.length >= 2) {
 									break;
 								}
@@ -135,9 +182,45 @@ package ld28.systems {
 						}
 					}
 				}
-				
 			}
 			//trace("MembranSystem", n);
+		}
+		
+		protected function refreshMembranChains(entity:Entity):void {
+			var part:Object = null;
+			var chain:MembranChain = null;
+			var current:Entity = entity;
+			var last:Entity = null;
+			var membranChain:MembranChain = MembranChain(entity.get(MembranChain));
+			while (current) {
+				if (membranChain.partEntities[current]) {
+					membranChain.circular = true;
+				}
+				membranChain.partEntities[current] = current;
+				membranChain.size++;
+				if (membranChain.circular = true) {
+					break;
+				}
+				current = Membran(current.get(Membran)).nextPart(last);
+				last = current;
+			}
+			for (part in membranChain.partEntities) {
+				chain = MembranChain(part.get(MembranChain));
+				if (!chain) {
+					chain = new MembranChain();
+				}
+				if (chain) {
+					chain.circular = membranChain.circular;
+					chain.size = membranChain.size;
+					chain.partEntities = new Dictionary();
+					for (part in membranChain.partEntities) {
+						chain.partEntities[part] = part;
+					}
+						//chain.partEntities = joined.partEntities;
+				} else {
+					part.add(membranChain);
+				}
+			}
 		}
 		
 		protected function checkCompleteness(node:MembranNode):void {

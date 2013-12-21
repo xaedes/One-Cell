@@ -31,6 +31,7 @@ package ld28 {
 	import ld28.components.Lifetime;
 	import ld28.components.Mass;
 	import ld28.components.Membran;
+	import ld28.components.MembranChain;
 	import ld28.components.Motion;
 	import ld28.components.KeyboardMotionControls;
 	import ld28.components.MouseMotionControls;
@@ -79,7 +80,7 @@ package ld28 {
 			var entity:Entity = new Entity();
 			
 			var radius:Number = 20;
-			var density:Number = 100;
+			var density:Number = 1000;
 			
 			var pos:Point = new Point(config.width / 2, config.height / 2);
 			
@@ -94,14 +95,14 @@ package ld28 {
 				add(new Size(new Point(radius * 2, radius * 2)));
 				add(new Circle(radius));
 				add(new Display(moverView));
-				add(new Mover(0.001));
-				//add(new Mover(0.0));
+				//add(new Mover(0.001));
+				add(new Mover(0.0));
 				add(new Motion(0, 0, 0.95));
 				add(new EnergyStorage(10, 5));
 				add(new HasEnergyStorageView(moverView.energyStorageView));
 				add(new KeyboardMotionControls(Keyboard.A, Keyboard.D, Keyboard.W, Keyboard.S, 1000));
 				//add(new MouseMotionControls(100));
-				
+				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 0, 2, 5));
 				add(new Audio());
 				add(new EnergyStorageEmitter(0.1, radius + 3, 1, 10, 0, 1, 1));
 				add(new Mass(radius * radius * Math.PI * density));
@@ -121,7 +122,7 @@ package ld28 {
 			var entity:Entity = new Entity();
 			
 			var radius:Number = 2;
-			var density:Number = 1;
+			var density:Number = 0.1;
 			var pos:Point = new Point(Utils.randomRange(0, config.width), Utils.randomRange(0, config.height));
 			
 			//var view:CircleView = new CircleView(radius, 0xFFF4BA);
@@ -171,7 +172,7 @@ package ld28 {
 				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 1, 2, 5));
 				add(new HasEnergyStorageView(energyProducerView.energyStorageView));
 				add(new Mass(radius * radius * Math.PI * density));
-				add(new SolidCollision(0.05));
+				add(new SolidCollision(0.95));
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
 				add(new Attractable(1));
@@ -202,7 +203,7 @@ package ld28 {
 			
 			var radius:Number = 10;
 			var radarRadius:Number = 20;
-			var density:Number = 0.1;
+			var density:Number = 2;
 			
 			var pos:Point = new Point(Utils.randomRange(0, config.width), Utils.randomRange(0, config.height));
 			
@@ -222,6 +223,7 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.95));
 				add(new Radar(radar));
 				add(new Membran());
+				add(new MembranChain());
 				add(new Attractable(1));
 			}
 			
