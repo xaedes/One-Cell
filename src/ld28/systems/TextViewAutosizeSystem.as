@@ -18,7 +18,7 @@ package ld28.systems {
 			if (node.textViewAutosize.textView == null) {
 				node.textViewAutosize.textView = TextView(node.display.displayObject);
 			}
-			trace(node.textViewAutosize.textView.getRect(node.textViewAutosize.textView.stage));
+			//trace(node.textViewAutosize.textView.getRect(node.textViewAutosize.textView.stage));
 			var rect:Rectangle = node.textViewAutosize.textView.getRect(node.textViewAutosize.textView.stage);
 			node.size.size.x = rect.width;
 			node.size.size.y = rect.height;

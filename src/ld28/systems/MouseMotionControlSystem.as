@@ -25,7 +25,7 @@ package ld28.systems {
 			if (!isNaN(diff.length)) {
 				
 				var accel:Point = Utils.mult(diff, node.control.accelerationRate * time * diffLen);
-				trace(accel.length);
+				//trace(accel.length);
 				
 				Utils.pointAdd(node.motion.velocity, accel);
 			}
