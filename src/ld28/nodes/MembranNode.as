@@ -7,7 +7,6 @@ package ld28.nodes {
 	public class MembranNode extends Node {
 		public var radar:Radar;
 		public var membran:Membran;
-		public var membranChain:MembranChain;
 	}
 
 }

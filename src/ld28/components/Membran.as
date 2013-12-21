@@ -8,8 +8,10 @@ package ld28.components {
 		public var straigthener:Entity = null;
 		public var connected:Dictionary = new Dictionary();
 		
-		public function Membran() {
+		public var chain:Entity; //chain.has(MembranChain)
 		
+		public function Membran(chain:Entity) {
+			this.chain = chain;
 		}
 	
 	}

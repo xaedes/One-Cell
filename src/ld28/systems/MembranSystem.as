@@ -52,6 +52,8 @@ package ld28.systems {
 			var textPosition:Position;
 			var connection:Entity;
 			var constraint:DistanceConstraint;
+			var chain1:MembranChain;
+			var chain2:MembranChain;
 			
 			dealWithBrokenConnections();
 			
@@ -75,7 +77,8 @@ package ld28.systems {
 								// no self connections
 								continue;
 							}
-							if (node1.membranChain.partEntities[node2.entity] && node1.membranChain.size <= 3) {
+							chain1 = MembranChain(node1.membran.chain.get(MembranChain));
+							if (chain1.partEntities[node2.entity] && chain1.size <= 3) {
 								// prevent rings of size <= 3
 								continue;
 							}
@@ -245,17 +248,35 @@ package ld28.systems {
 		}
 		
 		function refreshMembranChains(entity:Entity):void {
+			// traverse to get info about chain
 			var result:TraverseResult = traverseMembranChain(entity, null, null);
+			
+			// create new membran chain 
+			var membranChainEntity:Entity = creator.createMembranChain();
+			var membranChain:MembranChain = MembranChain(membranChainEntity.get(MembranChain));
+			
+			// fill membran chain with info about chain
+			for (var current:Object in result.visited) {
+				membranChain.addPart(Entity(current));
+			}
+			membranChain.circular = result.remarks["circular"];
+			
+			// apply new chain to all entities of chain
 			traverseMembranChain(entity, function(current:Entity, accumulator:Object, visited:Dictionary):void {
-					if (current.has(MembranChain)) {
-						var chain:MembranChain = current.get(MembranChain);
-						chain.circular = result.remarks["circular"];
-						Utils.dictionaryClean(chain.partEntities);
-						chain.size = 0;
-						for (var part:Object in result.visited) {
-							chain.partEntities[part] = part;
-							chain.size++;
+					if (current.has(Membran)) {
+						var membran:Membran = Membran(current.get(Membran));
+						// remove old membran chain
+						if (membran.chain.has(MembranChain)) {
+							// destroy old chain if it now has zero size
+							var chain:MembranChain = membran.chain.get(MembranChain);
+							chain.removePart(current);
+							if (chain.size == 0) {
+								creator.destroyEntity(membran.chain);
+								membran.chain = null;
+							}
 						}
+						// apply new chain
+						membran.chain = membranChainEntity;
 					}
 				}, null);
 		}
@@ -270,6 +291,7 @@ package ld28.systems {
 					connection.remove(Breakable);
 					if (connection.has(DistanceConstraint)) {
 						var constraint:DistanceConstraint = connection.get(DistanceConstraint);
+						
 						var r1:Number = 0.2;
 						var r2:Number = 0.6;
 						constraint.strength *= Utils.randomRange(1 - r1, 1 + r2);

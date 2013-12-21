@@ -210,6 +210,8 @@ package ld28 {
 			var radar:Entity = createRadar(radarRadius);
 			radar.add(new Anchor(entity));
 			
+			var chain:Entity = createMembranChain();
+			
 			var membranPartView:MembranPartView = new MembranPartView(radius);
 			with (entity) {
 				add(new Position(pos.x, pos.y));
@@ -222,11 +224,21 @@ package ld28 {
 				add(new Display(membranPartView));
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.95));
 				add(new Radar(radar));
-				add(new Membran());
-				add(new MembranChain(entity));
+				add(new Membran(chain));
 				add(new Attractable(1));
 			}
 			
+			MembranChain(chain.get(MembranChain)).addPart(entity);
+			
+			engine.addEntity(entity);
+			return entity;
+		}
+		
+		public function createMembranChain():Entity {
+			var entity:Entity = new Entity();
+			with (entity) {
+				add(new MembranChain());
+			}
 			engine.addEntity(entity);
 			return entity;
 		}
