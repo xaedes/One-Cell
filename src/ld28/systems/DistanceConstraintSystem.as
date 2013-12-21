@@ -22,7 +22,7 @@ package ld28.systems {
 				
 				// constraint axis
 				var rel:Point = pos1.position.subtract(pos2.position);
-				var relNorm = rel.clone();
+				var relNorm:Point = rel.clone();
 				relNorm.normalize(1);
 				
 				// damp velocity along constraint axis
