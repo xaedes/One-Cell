@@ -59,6 +59,12 @@ package ld28 {
 			}
 			return keys;
 		}
+		
+		static public function dictionaryClean(dict:Dictionary):void {
+			for (var key:Object in dict) {
+				delete dict[key];
+			}
+		}
 	}
 
 }

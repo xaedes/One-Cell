@@ -223,7 +223,7 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.95));
 				add(new Radar(radar));
 				add(new Membran());
-				add(new MembranChain());
+				add(new MembranChain(entity));
 				add(new Attractable(1));
 			}
 			

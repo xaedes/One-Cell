@@ -7,7 +7,7 @@ package ld28 {
 	import ld28.graphics.Redrawable;
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
-	import ld28.nodes.BreakingConnectionSystem;
+	import ld28.systems.BreakingConnectionSystem;
 	import ld28.systems.AlphaTweenSystem;
 	import ld28.systems.AnchorSystem;
 	import ld28.systems.AttractorControllerSystem;

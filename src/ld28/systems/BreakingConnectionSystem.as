@@ -1,4 +1,4 @@
-package ld28.nodes {
+package ld28.systems {
 	import ash.core.Entity;
 	import ash.tools.ListIteratingSystem;
 	import flash.geom.Point;
