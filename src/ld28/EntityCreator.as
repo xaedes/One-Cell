@@ -245,7 +245,7 @@ package ld28 {
 		
 		public function createMembranChain():Entity {
 			var entity:Entity = new Entity();
-			var view:RectView = new RectView(null, 0xFFFFFF, 0.1);
+			//var view:RectView = new RectView(null, 0xFFFFFF, 0.1);
 			with (entity) {
 				add(new MembranChain());
 				add(new Position(0, 0));
@@ -253,9 +253,9 @@ package ld28 {
 				add(new MembranChainSpatialUpdate());
 				add(new Collision());
 				add(new SpatialHashed());
-				add(new Display(view));
-				add(new Redrawing(view));
-				add(new AutoResizingRectView(view));
+				//add(new Display(view));
+				//add(new Redrawing(view));
+				//add(new AutoResizingRectView(view));
 				add(new MembranChainOrderedEntities());
 			}
 			engine.addEntity(entity);
