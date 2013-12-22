@@ -2,6 +2,8 @@ package ld28.systems {
 	import ash.tools.ListIteratingSystem;
 	import de.polygonal.ds.Array2;
 	import de.polygonal.ds.DLLNode;
+	import flash.geom.Rectangle;
+	import ld28.components.Size;
 	import ld28.etc.GridCell;
 	import ld28.GameConfig;
 	import ld28.nodes.SpatialHashingNode;
@@ -41,10 +43,11 @@ package ld28.systems {
 		//}
 		
 		private function addNode(node:SpatialHashingNode):void {
-			var left:int = int(Math.floor((node.position.position.x - node.size.size.x / 2) / gridSize));
-			var right:int = int(Math.floor((node.position.position.x + node.size.size.x / 2) / gridSize));
-			var top:int = int(Math.floor((node.position.position.y - node.size.size.x / 2) / gridSize));
-			var bottom:int = int(Math.floor((node.position.position.y + node.size.size.x / 2) / gridSize));
+			var rect:Rectangle = getBoundingRect(node);
+			var left:int = int(Math.floor(rect.left / gridSize));
+			var right:int = int(Math.floor(rect.right / gridSize));
+			var top:int = int(Math.floor(rect.top / gridSize));
+			var bottom:int = int(Math.floor(rect.bottom / gridSize));
 			
 			node.spatialHashed.left = left;
 			node.spatialHashed.right = right;
@@ -73,13 +76,38 @@ package ld28.systems {
 			node.spatialHashed.dllNodes.clear();
 		}
 		
+		private function getBoundingRect(node:SpatialHashingNode):Rectangle {
+			var rect:Rectangle = new Rectangle();
+			rect.width = node.size.size.x;
+			rect.height = node.size.size.y;
+			if ((node.size.align == Size.ALIGN_TOP_LEFT) || (node.size.align == Size.ALIGN_TOP_CENTER) || (node.size.align == Size.ALIGN_TOP_RIGHT)) {
+				rect.y = node.position.position.y;
+			}
+			if ((node.size.align == Size.ALIGN_CENTER_LEFT) || (node.size.align == Size.ALIGN_CENTER_CENTER) || (node.size.align == Size.ALIGN_CENTER_RIGHT)) {
+				rect.y = node.position.position.y - node.size.size.y / 2;
+			}
+			if ((node.size.align == Size.ALIGN_BOTTOM_LEFT) || (node.size.align == Size.ALIGN_BOTTOM_CENTER) || (node.size.align == Size.ALIGN_BOTTOM_RIGHT)) {
+				rect.y = node.position.position.y - node.size.size.y;
+			}
+			if ((node.size.align == Size.ALIGN_TOP_LEFT) || (node.size.align == Size.ALIGN_CENTER_LEFT) || (node.size.align == Size.ALIGN_BOTTOM_LEFT)) {
+				rect.x = node.position.position.x;
+			}
+			if ((node.size.align == Size.ALIGN_TOP_CENTER) || (node.size.align == Size.ALIGN_CENTER_CENTER) || (node.size.align == Size.ALIGN_BOTTOM_CENTER)) {
+				rect.x = node.position.position.x - node.size.size.x / 2;
+			}
+			if ((node.size.align == Size.ALIGN_TOP_RIGHT) || (node.size.align == Size.ALIGN_CENTER_RIGHT) || (node.size.align == Size.ALIGN_BOTTOM_RIGHT)) {
+				rect.x = node.position.position.x - node.size.size.x;
+			}
+			return rect;
+		}
+		
 		private function updateNode(node:SpatialHashingNode, time:Number):void {
-			//var rect:Rectangle = Utils.rectFromCenter(node.position.position, node.size.size.x, node.size.size.y);
+			var rect:Rectangle = getBoundingRect(node);
 			
-			var left:int = int(Math.floor((node.position.position.x - node.size.size.x / 2) / gridSize));
-			var right:int = int(Math.floor((node.position.position.x + node.size.size.x / 2) / gridSize));
-			var top:int = int(Math.floor((node.position.position.y - node.size.size.x / 2) / gridSize));
-			var bottom:int = int(Math.floor((node.position.position.y + node.size.size.x / 2) / gridSize));
+			var left:int = int(Math.floor(rect.left / gridSize));
+			var right:int = int(Math.floor(rect.right / gridSize));
+			var top:int = int(Math.floor(rect.top / gridSize));
+			var bottom:int = int(Math.floor(rect.bottom / gridSize));
 			
 			if ((left != node.spatialHashed.left) || (right != node.spatialHashed.right) || (top != node.spatialHashed.top) || (bottom != node.spatialHashed.bottom)) {
 				removeNode(node);

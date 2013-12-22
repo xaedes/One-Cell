@@ -35,6 +35,7 @@ package ld28 {
 	import ld28.components.Mass;
 	import ld28.components.Membran;
 	import ld28.components.MembranChain;
+	import ld28.components.MembranChainOrderedEntities;
 	import ld28.components.MembranChainSpatialUpdate;
 	import ld28.components.Motion;
 	import ld28.components.KeyboardMotionControls;
@@ -89,7 +90,7 @@ package ld28 {
 			
 			var pos:Point = new Point(config.width / 2, config.height / 2);
 			
-			var attractor:Entity = createAttractor(radius * 3, 5);
+			var attractor:Entity = createAttractor(radius * 10, 5);
 			attractor.add(new Anchor(entity));
 			attractor.add(new AttractorController(Keyboard.SPACE));
 			
@@ -248,13 +249,14 @@ package ld28 {
 			with (entity) {
 				add(new MembranChain());
 				add(new Position(0, 0));
-				add(new Size(new Point(), Size.ALIGN_CENTER_CENTER));
+				add(new Size(new Point(), Size.ALIGN_TOP_LEFT));
 				add(new MembranChainSpatialUpdate());
 				add(new Collision());
 				add(new SpatialHashed());
 				add(new Display(view));
 				add(new Redrawing(view));
 				add(new AutoResizingRectView(view));
+				add(new MembranChainOrderedEntities());
 			}
 			engine.addEntity(entity);
 			return entity;
@@ -352,6 +354,14 @@ package ld28 {
 			engine.addEntity(entity);
 			return entity;
 		}
-	
+		
+		public function createTimer():Entity {
+			var entity:Entity = new Entity();
+			with (entity) {
+				add(new Timer());
+			}
+			engine.addEntity(entity);
+			return entity;
+		}
 	}
 }

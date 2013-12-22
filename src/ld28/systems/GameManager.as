@@ -61,12 +61,13 @@ package ld28.systems {
 		}
 		
 		internal function state_init(time:Number):void {
+			var player:Entity;
 			var position:Position;
 			var display:Display;
 			var textView:TextView;
 			var size:Size;
 			//init
-			creator.createPlayer();
+			player = creator.createPlayer();
 			
 			entities["controls"] = creator.createText("Controls: W,A,S,D,Space");
 			position = Position(entities["controls"].get(Position));
@@ -77,22 +78,59 @@ package ld28.systems {
 			textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
 			textView.textField.autoSize = TextFieldAutoSize.LEFT;
 			
-			entities["move_here_text"] = creator.createText("Move here");
-			position = Position(entities["move_here_text"].get(Position));
-			position.position.x = 200;
-			position.position.y = 150;
-			size = Size(entities["move_here_text"].get(Size));
-			display = Display(entities["move_here_text"].get(Display));
-			textView = TextView(display.displayObject);
-			textView.textField.y -= 10;
-			
-			entities["move_here_circle"] = creator.createCircle(10, 0xffffff, 0.1);
-			entities["move_here_circle"].add(new Collision());
-			entities["move_here_circle"].add(new SpatialHashed());
-			entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
-			display = Display(entities["move_here_circle"].get(Display));
-			entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
-			game.gameState.state = "move_here";
+			game.gameState.state = "move_here_init";
+		}
+		
+		internal function state_move_here_init(time:Number):void {
+			var display:Display;
+			var position:Position;
+			var size:Size;
+			var textView:TextView;
+			var circleView:CircleView;
+			var circle:Circle;
+			if (!entities["move_here_timer"]) {
+				entities["move_here_timer"] = creator.createTimer();
+			}
+			if (!entities["move_here_text"]) {
+				entities["move_here_text"] = creator.createText("Move here");
+				position = Position(entities["move_here_text"].get(Position));
+				position.position.x = 200;
+				position.position.y = 150;
+				size = Size(entities["move_here_text"].get(Size));
+				display = Display(entities["move_here_text"].get(Display));
+				textView = TextView(display.displayObject);
+				textView.textField.y -= 10;
+			}
+			if (!entities["move_here_circle"]) {
+				entities["move_here_circle"] = creator.createCircle(10, 0xffffff, 0.1);
+				entities["move_here_circle"].add(new Collision());
+				entities["move_here_circle"].add(new SpatialHashed());
+				entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
+				display = Display(entities["move_here_circle"].get(Display));
+				entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
+			}
+			if (entities["move_here_timer"]) {
+				if (Timer(Entity(entities["move_here_timer"]).get(Timer)).seconds < 0.1) {
+					if (entities["move_here_text"]) {
+						if (entities["move_here_circle"]) {
+							size = Size(entities["move_here_text"].get(Size));
+							circle = Circle(entities["move_here_circle"].get(Circle));
+							circle.radius = size.size.x / 2;
+							size = Size(entities["move_here_circle"].get(Size));
+							size.size.x = circle.radius * 2;
+							size.size.y = circle.radius * 2;
+							display = Display(entities["move_here_circle"].get(Display));
+							circleView = CircleView(display.displayObject);
+							circleView._radius = circle.radius;
+						}
+					}
+				} else {
+					creator.destroyEntity(entities["move_here_timer"]);
+					delete entities["move_here_timer"];
+					game.gameState.state = "move_here";
+				}
+				
+			}
 		}
 		
 		internal function state_move_here(time:Number):void {
@@ -189,6 +227,8 @@ package ld28.systems {
 				}
 				if (game.gameState.state == "") {
 					state_init(time);
+				} else if (game.gameState.state == "move_here_init") {
+					state_move_here_init(time);
 				} else if (game.gameState.state == "move_here") {
 					state_move_here(time);
 				} else if (game.gameState.state == "alive") {

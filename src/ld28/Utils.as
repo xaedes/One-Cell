@@ -60,6 +60,16 @@ package ld28 {
 			return keys;
 		}
 		
+		static public function getIthKey(dict:Dictionary, i:int):Object {
+			var _i:int = 0;
+			for (var key:Object in dict) {
+				if (i == _i)
+					return key;
+				_i++;
+			}
+			return null;
+		}
+		
 		static public function dictionaryClean(dict:Dictionary):void {
 			for (var key:Object in dict) {
 				delete dict[key];

@@ -4,10 +4,6 @@ package ld28.components {
 	import flash.utils.Dictionary;
 	import ld28.Utils;
 	
-	/**
-	 * ...
-	 * @author xaedes
-	 */
 	public class MembranChain {
 		public var _size:int = 0;
 		public var circular:Boolean = false;

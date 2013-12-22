@@ -16,6 +16,7 @@ package ld28.systems {
 	import ld28.components.DistanceConstraint;
 	import ld28.components.Membran;
 	import ld28.components.MembranChain;
+	import ld28.components.MembranChainOrderedEntities;
 	import ld28.components.Player;
 	import ld28.components.Position;
 	import ld28.components.Radar;
@@ -200,27 +201,50 @@ package ld28.systems {
 			}
 		}
 		
-		public function traverseMembranChain(startMembranEntity:Entity, callback:Function, accumulator:Object = null):TraverseResult {
+		/**
+		 * traverses whole chain over each entity
+		 * @param	startMembranEntity
+		 * @param	callback=function(current:Entity, accumulator:Object, visited:Dictionary)
+		 * @param	accumulator
+		 * @return  TraverseResults
+		 */
+		static public function traverseMembranChain(startMembranEntity:Entity, callback:Function, accumulator:Object = null):TraverseResult {
 			var stack:Stack = new ArrayedStack(2);
 			
 			stack.push(startMembranEntity);
 			
 			var current:Entity;
 			var membran:Membran;
-			var results:TraverseResult = new TraverseResult();
+			var results:TraverseResult = new TraverseResult(accumulator);
+			var called:Dictionary;
+			if (callback != null) {
+				called = new Dictionary(accumulator)
+			}
+			var all_fully_connected:Boolean = true;
 			
 			results.remarks["circular"] = false;
 			
 			while (!stack.isEmpty()) {
 				current = Entity(stack.pop());
+				if (results.visited[current]) {
+					results.remarks["circular"] = true;
+				}
 				results.visited[current] = current;
+				results.numVisited++;
 				if (current) {
 					if (current.has(Membran)) {
 						
-						if (callback != null)
-							callback.call(null, current, accumulator, results.visited);
+						if (callback != null) {
+							if (!called[current]) {
+								callback.call(null, current, accumulator, results.visited);
+								called[current] = current;
+							}
+						}
 						
 						membran = current.get(Membran);
+						
+						all_fully_connected &&= (membran.connections.length == 2);
+						
 						for (var i:int = 0; i < membran.connections.length; i++) {
 							var connection:Entity = membran.connections[i];
 							if (connection.has(DistanceConstraint)) {
@@ -228,21 +252,20 @@ package ld28.systems {
 								if (current == constraint.entity2) {
 									if (!results.visited[constraint.entity1]) {
 										stack.push(constraint.entity1);
-									} else {
-										results.remarks["circular"] = true;
 									}
 								}
 								if (current == constraint.entity1) {
 									if (!results.visited[constraint.entity2]) {
 										stack.push(constraint.entity2);
-									} else {
-										results.remarks["circular"] = true;
 									}
 								}
 							}
 						}
 					}
 				}
+			}
+			if (all_fully_connected) {
+				results.remarks["circular"] = true;
 			}
 			return results;
 		}
@@ -260,7 +283,10 @@ package ld28.systems {
 				membranChain.addPart(Entity(current));
 			}
 			membranChain.circular = result.remarks["circular"];
-			
+			if (membranChainEntity.has(MembranChainOrderedEntities)) {
+				var membranChainOrderedEntities:MembranChainOrderedEntities = MembranChainOrderedEntities(membranChainEntity.get(MembranChainOrderedEntities));
+				membranChainOrderedEntities.needsUpdate = true;
+			}
 			// apply new chain to all entities of chain
 			traverseMembranChain(entity, function(current:Entity, accumulator:Object, visited:Dictionary):void {
 					if (current.has(Membran)) {

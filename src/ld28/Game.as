@@ -22,6 +22,8 @@ package ld28 {
 	import ld28.systems.GravitySystem;
 	import ld28.systems.KeyboardMotionControlSystem;
 	import ld28.systems.LifetimeSystem;
+	import ld28.systems.MembranChainContainedEntitesSystem;
+	import ld28.systems.MembranChainOrderedEntitiesSystem;
 	import ld28.systems.MembranChainSpatialUpdateSystem;
 	import ld28.systems.MembranSystem;
 	import ld28.systems.MovementSystem;
@@ -72,6 +74,7 @@ package ld28 {
 			// todo: add priorites (CollisionSystem < SolidCollisionSystem, CollisionSystem < EnergyCollectingCollisionSystem)
 			var spatialHashingSystem:SpatialHashingSystem = new SpatialHashingSystem(config, 10);
 			var k:int = 0;
+			engine.addSystem(new AutoResizingRectViewSystem(), k++);
 			engine.addSystem(new RedrawingSystem(), k++);
 			engine.addSystem(new AnchorSystem(), k++);
 			engine.addSystem(new MovementSystem(config), k++);
@@ -100,7 +103,8 @@ package ld28 {
 			engine.addSystem(new EnergyStorageWarningSystem(creator), k++);
 			engine.addSystem(new TextViewAutosizeSystem(), k++);
 			engine.addSystem(new MembranChainSpatialUpdateSystem(), k++);
-			engine.addSystem(new AutoResizingRectViewSystem(), k++);
+			engine.addSystem(new MembranChainOrderedEntitiesSystem(creator), k++);
+			engine.addSystem(new MembranChainContainedEntitesSystem(creator), k++);
 			engine.addSystem(new RenderSystem(container), k++);
 		
 		}
