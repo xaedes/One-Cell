@@ -16,8 +16,8 @@ package ld28.systems {
 			
 			var anchorPosition:Position = anchor.entity.get(Position);
 			
-			position.position.x = anchorPosition.position.x;
-			position.position.y = anchorPosition.position.y;
+			position.position.x = anchorPosition.position.x + anchor.offset.x;
+			position.position.y = anchorPosition.position.y + anchor.offset.y;
 		}
 	}
 }
