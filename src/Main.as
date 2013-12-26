@@ -1,4 +1,5 @@
 package {
+	import com.flashdynamix.utils.SWFProfiler;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import ld28.Game;
@@ -16,6 +17,7 @@ package {
 		}
 		
 		private function init(e:Event = null):void {
+			SWFProfiler.init(this.stage, this);
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			game = new Game(this, stage.stageWidth, stage.stageHeight);
 			game.start();
