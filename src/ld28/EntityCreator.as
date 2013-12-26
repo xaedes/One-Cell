@@ -194,7 +194,7 @@ package ld28 {
 				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Display(energyProducerView));
-				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.995));
+				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.985));
 				add(new EnergyStorage(_maxEnergy, Utils.randomRange(0, _maxEnergy)));
 				add(new Collision());
 				add(new CircleCircleCollision());
