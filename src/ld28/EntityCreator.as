@@ -261,6 +261,7 @@ package ld28 {
 				add(new Membran(chain));
 				add(new Attractable(1));
 				add(new CanBeContainedInMembranChains());
+				add(new Audio());
 			}
 			
 			MembranChain(chain.get(MembranChain)).addPart(entity);

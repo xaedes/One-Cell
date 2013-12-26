@@ -5,8 +5,13 @@ package ld28 {
 	 * @author xaedes
 	 */
 	public class Assets {
-		[Embed(source="../../assets/Pickup_Coin6.mp3")]
+		[Embed(source="../../assets/Pickup_Coin5_more_bass.mp3")]
 		static public var CollectEnergy:Class;
+		
+		[Embed(source="../../assets/Jump25.mp3")]
+		static public var MembranConnectionJoin:Class;
+		[Embed(source="../../assets/Hit_Hurt10.mp3")]
+		static public var MembranConnectionBreak:Class;
 		
 		public function Assets() {
 		}

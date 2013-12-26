@@ -119,10 +119,14 @@ package ld28.systems {
 								// refresh MembranChains
 								refreshMembranChains(node1.entity);
 								
+								// play join audio
+								node1.audio.play(Assets.MembranConnectionJoin);
+								
 								//if node1 is fully connected dont look for more
 								if (node1.membran.connections.length >= 2) {
 									break;
 								}
+								
 							}
 						}
 					}
@@ -146,6 +150,9 @@ package ld28.systems {
 					if (connection.has(Breakable)) {
 						var breakable:Breakable = connection.get(Breakable);
 						if (breakable.broken) {
+							// play break audio
+							node.audio.play(Assets.MembranConnectionBreak);
+							
 							// get constraint
 							constraint = connection.get(DistanceConstraint);
 							
