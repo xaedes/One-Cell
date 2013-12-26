@@ -38,9 +38,11 @@ package ld28.systems {
 			if (keyPoll.isDown(control.down)) {
 				accel.y += control.accelerationRate * time;
 			}
-			var maxAccel:Number = energyStorage.energy / mover.energyConsumption;
-			if (accel.length > maxAccel) {
-				accel.normalize(maxAccel);
+			if (mover.energyConsumption != 0) {
+				var maxAccel:Number = energyStorage.energy / mover.energyConsumption;
+				if (accel.length > maxAccel) {
+					accel.normalize(maxAccel);
+				}
 			}
 			energyStorage.energy -= accel.length * mover.energyConsumption;
 			motion.velocity = motion.velocity.add(accel);
