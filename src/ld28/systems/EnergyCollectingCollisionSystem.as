@@ -53,7 +53,7 @@ package ld28.systems {
 							if (energyCollector.entity.has(Audio)) {
 								
 								var audio:Audio = energyCollector.entity.get(Audio);
-								audio.play(Assets.CollectEnergy);
+								audio.play(Assets.CollectEnergy, 0.1);
 							}
 						}
 						
