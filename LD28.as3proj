@@ -55,6 +55,8 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="libs\ds_alchemy.swc" />
+    <element path="libs\as3commons-reflect-1.6.4.swc" />
+    <element path="libs\as3commons-lang-0.3.7.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
