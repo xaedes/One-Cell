@@ -46,11 +46,13 @@ package ld28.systems {
 						position = Position(entity.get(Position));
 						
 						// test if entity is contained in membran chain or not
-						//  - simplyfy to position of entity inside concav polygon build by membran part entities positions
-						// -> test position inside or outside of concav polygon
+						//  - simplify to position of entity inside concave polygon build by membran part entity positions
+						// -> test position inside or outside of concave polygon
 						// use Ray casting algorithm (http://en.wikipedia.org/wiki/Point_in_polygon) for this
 						// cast ray along x-axis -> look for intersections in y-axis to find intersecting connections
 						// count intersections
+						// even number of intersections -> outside
+						// odd number of intersections -> inside
 						var intersections:int = 0;
 						var direction:int = -1;
 						var lastY:Number;
@@ -106,7 +108,7 @@ package ld28.systems {
 									//circle.add(new AlphaTween(0, time));
 							}
 							
-						} else {
+						} else { // outside
 							if (node.membranChain.containedEntities[entity]) {
 								canBeContainedInMembranChains.removeMembranChain(node.entity);
 								delete node.membranChain.containedEntities[entity];
