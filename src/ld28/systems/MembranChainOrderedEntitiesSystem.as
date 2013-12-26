@@ -35,7 +35,7 @@ package ld28.systems {
 					start = Entity(Utils.getIthKey(node.membranChain.partEntities, 0));
 				} else {
 					// get tail of membran chain
-					var results:TraverseResult = MembranSystem.traverseMembranChain(Entity(Utils.getIthKey(node.membranChain.partEntities, 0)), function(current:Entity, accumulator:Object, visited:Dictionary) {
+					var results:TraverseResult = MembranSystem.traverseMembranChain(Entity(Utils.getIthKey(node.membranChain.partEntities, 0)), function(current:Entity, accumulator:Object, visited:Dictionary):void {
 							if (accumulator == null) {
 								accumulator = new Dictionary();
 								accumulator["tail"] = null;
@@ -50,7 +50,7 @@ package ld28.systems {
 					// clean old ordered list
 					node.membranChainOrderedEntities.ordered.splice(0, node.membranChainOrderedEntities.ordered.length);
 					// traverse from start and put all walked entities in ordered list
-					MembranSystem.traverseMembranChain(start, function(current:Entity, accumulator:Object, visited:Dictionary) {
+					MembranSystem.traverseMembranChain(start, function(current:Entity, accumulator:Object, visited:Dictionary):void {
 							node.membranChainOrderedEntities.ordered.push(current);
 							
 							//just for fun and debugging add visuals when order updated

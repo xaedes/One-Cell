@@ -260,9 +260,10 @@ package ash.core {
 		 */
 		public function update(time:Number):void {
 			//getTimer(
+			var system:System;
 			updating = true;
 			if (profilingEnabled) {
-				for (var system:System = systemList.head; system; system = system.next) {
+				for (system = systemList.head; system; system = system.next) {
 					if (system.profilingEnabled) {
 						var startTime:int = getTimer();
 						system.update(time);
@@ -274,7 +275,7 @@ package ash.core {
 					}
 				}
 			} else {
-				for (var system:System = systemList.head; system; system = system.next) {
+				for (system = systemList.head; system; system = system.next) {
 					system.update(time);
 				}
 			}

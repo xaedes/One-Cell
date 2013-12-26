@@ -32,15 +32,16 @@ package ld28.systems {
 		}
 		
 		override public function update(time:Number):void {
+			var system:System;
 			if (engine && engine.profilingEnabled && sortedProfiledSystems && sortedProfiledSystems.length > 0) {
 				sortedProfiledSystems.sortOn("profilingTimePerUpdate");
 				var totalTimePerUpdate:Number = 0;
 				trace("Profiling");
 				trace("----------");
-				for each (var system:System in sortedProfiledSystems) {
+				for each (system in sortedProfiledSystems) {
 					totalTimePerUpdate += system.profilingTimePerUpdate;
 				}
-				for each (var system:System in sortedProfiledSystems) {
+				for each (system in sortedProfiledSystems) {
 					trace(system, Math.round(1000 * system.profilingTimePerUpdate / totalTimePerUpdate) / 10 + "%");
 				}
 			}
