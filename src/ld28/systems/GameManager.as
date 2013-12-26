@@ -9,8 +9,10 @@ package ld28.systems {
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Dictionary;
+	import ld28.Assets;
 	import ld28.components.AlphaTween;
 	import ld28.components.Anchor;
+	import ld28.components.Audio;
 	import ld28.components.CircleCircleCollision;
 	import ld28.components.Display;
 	import ld28.components.EnergyStorage;
@@ -116,6 +118,7 @@ package ld28.systems {
 					Utils.pointAdd(position.position, new Point(0, -60));
 					textView.textField.defaultTextFormat = new TextFormat(null, 30, 0x52B600);
 					
+					Audio(entities["player"].get(Audio)).play(Assets.GoodJob);
 					// remove old goal
 					blendOutEntity(entities[game.gameState.state + "_goal"]);
 					delete entities[game.gameState.state + "_goal"];
