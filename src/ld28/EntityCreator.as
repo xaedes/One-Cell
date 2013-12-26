@@ -278,8 +278,8 @@ package ld28 {
 				add(new Position(0, 0));
 				add(new Size(new Point(), Size.ALIGN_TOP_LEFT));
 				add(new MembranChainSpatialUpdate());
-				//add(new Collision());
-				//add(new SpatialHashed());
+				add(new Collision());
+				add(new SpatialHashed());
 				//add(new Display(view));
 				//add(new Redrawing(view));
 				//add(new AutoResizingRectView(view));
