@@ -14,6 +14,7 @@ package ld28.systems {
 	import ld28.components.CircleCircleCollision;
 	import ld28.components.Display;
 	import ld28.components.EnergyStorage;
+	import ld28.components.EnergyStorageWarning;
 	import ld28.components.Lifetime;
 	import ld28.components.Mover;
 	import ld28.components.Position;
@@ -22,6 +23,7 @@ package ld28.systems {
 	import ld28.EntityCreator;
 	import ld28.graphics.TextView;
 	import ld28.nodes.GameStateNode;
+	import ld28.nodes.MembranChainNode;
 	import ld28.Utils;
 	import org.as3commons.reflect.Method;
 	import org.as3commons.reflect.Type;
@@ -74,6 +76,7 @@ package ld28.systems {
 			position.position.x = 100;
 			position.position.y = 50;
 			display = Display(entities["controls"].get(Display));
+			display.z = 10;
 			textView = TextView(display.displayObject);
 			textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
 			textView.textField.autoSize = TextFieldAutoSize.LEFT;
@@ -88,7 +91,8 @@ package ld28.systems {
 		}
 		
 		public function state_start(time:Number):void {
-			game.gameState.state = "move_here";
+			//game.gameState.state = "move_here";
+			game.gameState.state = "alive";
 		}
 		
 		public function state_move_here_init(time:Number):void {
@@ -102,20 +106,29 @@ package ld28.systems {
 		}
 		
 		public function state_move_here(time:Number):void {
-			if (CircleCircleCollision(entities[game.gameState.state + "_goal"].get(CircleCircleCollision)).collidingEntities[entities["player"]]) {
-				// give player positive feedback
-				entities[game.gameState.state + "_good_job"] = creator.createFloatingText("Good job!");
-				var position:Position = Position(entities[game.gameState.state + "_good_job"].get(Position));
-				var textView:TextView = TextView(Display(entities[game.gameState.state + "_good_job"].get(Display)).displayObject);
-				Utils.pointSet(position.position, Position(entities[game.gameState.state + "_goal"].get(Position)).position);
-				Utils.pointAdd(position.position, new Point(0, -60));
-				textView.textField.defaultTextFormat = new TextFormat(null, 30, 0x52B600);
-				
-				// remove old goal
-				blendOutEntity(entities[game.gameState.state + "_goal"]);
-				delete entities[game.gameState.state + "_goal"];
-				
-				game.gameState.state = "learn_about_energy";
+			if (entities[game.gameState.state + "_goal"]) {
+				if (CircleCircleCollision(entities[game.gameState.state + "_goal"].get(CircleCircleCollision)).collidingEntities[entities["player"]]) {
+					// give player positive feedback
+					entities[game.gameState.state + "_good_job"] = creator.createFloatingText("Good job!");
+					var position:Position = Position(entities[game.gameState.state + "_good_job"].get(Position));
+					var textView:TextView = TextView(Display(entities[game.gameState.state + "_good_job"].get(Display)).displayObject);
+					Utils.pointSet(position.position, Position(entities[game.gameState.state + "_goal"].get(Position)).position);
+					Utils.pointAdd(position.position, new Point(0, -60));
+					textView.textField.defaultTextFormat = new TextFormat(null, 30, 0x52B600);
+					
+					// remove old goal
+					blendOutEntity(entities[game.gameState.state + "_goal"]);
+					delete entities[game.gameState.state + "_goal"];
+					
+					entities[game.gameState.state + "_timer"] = creator.createTimer();
+				}
+			}
+			if (entities[game.gameState.state + "_timer"]) {
+				if (Timer(entities[game.gameState.state + "_timer"].get(Timer)).seconds >= 2) {
+					creator.destroyEntity(entities[game.gameState.state + "_timer"]);
+					delete entities[game.gameState.state + "_timer"];
+					game.gameState.state = "learn_about_energy";
+				}
 			}
 		}
 		
@@ -123,8 +136,10 @@ package ld28.systems {
 			// player movement now costs a lot of energy
 			Mover(entities["player"].get(Mover)).energyConsumption = 0.006;
 			
+			entities["player"].disable(EnergyStorageWarning);
+			
 			// give player goal to move to
-			entities[game.gameState.state + "_goal"] = creator.createLabeledCircle("Now move here", 500, 350);
+			entities[game.gameState.state + "_goal"] = creator.createLabeledCircle("Now\nmove here", 600, 350);
 			
 			// tell player that he consumes energy while moving
 			entities[game.gameState.state + "_hint1"] = creator.createFloatingText("Moving consumes energy", 5);
@@ -141,20 +156,23 @@ package ld28.systems {
 				if (!entities[game.gameState.state + "_hint2"]) {
 					entities[game.gameState.state + "_hint2"] = creator.createFloatingText("Without energy you can not move", 5);
 					entities[game.gameState.state + "_hint2"].add(new Anchor(entities["player"], new Point(0, -60)));
+				} else {
+					trace(entities[game.gameState.state + "_hint2"]);
 				}
 			}
 		
-			//var minEnergy = energyStorage.maxEnergy * 0.1;
-			//if (energyStorage.energy < minEnergy)
-			//energyStorage.energy = minEnergy;
 		}
 		
-		//internal function state_build_ring(time:Number):void {
-		//var chains:NodeList = engine.getNodeList(MembranChainNode);
-		//if (chains.size == 1) {
-		//
-		//}
-		//}
+		public function state_build_ring_init(time:Number):void {
+			game.gameState.initialized = true;
+		}
+		
+		public function state_build_ring(time:Number):void {
+			var chains:NodeList = engine.getNodeList(MembranChainNode);
+			if (chains.size == 1) {
+				game.gameState.state = "alive";
+			}
+		}
 		
 		public function state_alive_init(time:Number):void {
 			var i:int;
@@ -181,14 +199,6 @@ package ld28.systems {
 			var display:Display;
 			
 			if (game) {
-				if (entities["controls"]) {
-					display = Display(entities["controls"].get(Display));
-					display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
-				}
-				if (entities["move_here_text"]) {
-					display = Display(entities["move_here_text"].get(Display));
-					display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
-				}
 				if (game.gameState.state == "") {
 					game.gameState.state = "start";
 				}
