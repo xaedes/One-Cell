@@ -13,7 +13,7 @@ package ld28.graphics {
 			this.textView = new TextView(text);
 			
 			var format:TextFormat = new TextFormat();
-			format.align = TextFormatAlign.LEFT;
+			format.align = TextFormatAlign.CENTER;
 			this.textView.textField.defaultTextFormat = format;
 			this.textView.textField.autoSize = TextFieldAutoSize.LEFT;
 			
