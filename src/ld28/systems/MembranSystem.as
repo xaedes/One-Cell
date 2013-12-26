@@ -46,6 +46,12 @@ package ld28.systems {
 		}
 		
 		override public function update(time:Number):void {
+			
+			dealWithBrokenConnections();
+			tryToAddMore();
+		}
+		
+		protected function tryToAddMore():void {
 			var tmpNode:MembranNode;
 			var node1:MembranNode;
 			var pos1:Position;
@@ -56,8 +62,6 @@ package ld28.systems {
 			var constraint:DistanceConstraint;
 			var chain1:MembranChain;
 			var chain2:MembranChain;
-			
-			dealWithBrokenConnections();
 			
 			// try to add more
 			for (node1 = nodes.head; node1; node1 = node1.next) {
@@ -124,7 +128,6 @@ package ld28.systems {
 					}
 				}
 			}
-		
 		}
 		
 		protected function dealWithBrokenConnections():void {
