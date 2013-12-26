@@ -2,22 +2,51 @@ package ld28.graphics {
 	import flash.display.Shape;
 	
 	public class CircleView extends Shape implements Redrawable {
-		public var _radius:Number;
-		public var _color:uint;
-		public var _alpha:Number;
+		private var _radius:Number;
+		private var _color:uint;
+		private var _redrawNecessary:Boolean;
 		
 		public function CircleView(_radius:Number = 10, _color:uint = 0xFFFFFF, _alpha:Number = 1) {
-			this._radius = _radius;
-			this._color = _color;
-			this._alpha = _alpha;
+			this.radius = _radius;
+			this.color = _color;
+			this.alpha = _alpha;
+			
 			this.redraw(0);
 		}
 		
+		public function get radius():Number {
+			return this._radius;
+		}
+		
+		public function set radius(value:Number):void {
+			if (this._radius != value)
+				this._redrawNecessary = true;
+			this._radius = value;
+		}
+		
+		public function get color():uint {
+			return this._color;
+		}
+		
+		public function set color(value:uint):void {
+			if (this._color != value)
+				this._redrawNecessary = true;
+			this._color = value;
+		}
+		
+		override public function set alpha(value:Number):void {
+			if (this.alpha != value)
+				this._redrawNecessary = true;
+			super.alpha = value;
+		}
+		
 		public function redraw(time:Number):void {
-			graphics.clear();
-			graphics.beginFill(_color, _alpha);
-			graphics.drawCircle(0, 0, _radius);
-			graphics.endFill();
+			if (this._redrawNecessary) {
+				graphics.clear();
+				graphics.beginFill(_color);
+				graphics.drawCircle(0, 0, _radius);
+				graphics.endFill();
+			}
 		}
 	}
 }

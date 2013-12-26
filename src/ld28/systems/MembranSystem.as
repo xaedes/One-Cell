@@ -11,6 +11,7 @@ package ld28.systems {
 	import ld28.Assets;
 	import ld28.components.Audio;
 	import ld28.components.Breakable;
+	import ld28.components.CircleCircleCollision;
 	import ld28.components.Collision;
 	import ld28.components.Display;
 	import ld28.components.DistanceConstraint;
@@ -62,6 +63,7 @@ package ld28.systems {
 			for (node1 = nodes.head; node1; node1 = node1.next) {
 				if (node1.membran.connections.length < 2) {
 					// not fully connected
+					//var radarCollisions:CircleCircleCollision = node1.radar.entity.get(CircleCircleCollision);
 					var radarCollisions:Collision = node1.radar.entity.get(Collision);
 					for each (var entity:Entity in radarCollisions.collidingEntities) {
 						//n++;

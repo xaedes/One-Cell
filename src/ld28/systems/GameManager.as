@@ -11,21 +11,20 @@ package ld28.systems {
 	import flash.utils.Dictionary;
 	import ld28.components.AlphaTween;
 	import ld28.components.Anchor;
-	import ld28.components.Circle;
-	import ld28.components.Collision;
+	import ld28.components.CircleCircleCollision;
 	import ld28.components.Display;
+	import ld28.components.EnergyStorage;
 	import ld28.components.Lifetime;
-	import ld28.components.Player;
+	import ld28.components.Mover;
 	import ld28.components.Position;
-	import ld28.components.Redrawing;
-	import ld28.components.Size;
-	import ld28.components.SpatialHashed;
 	import ld28.components.Timer;
+	import ld28.components.Size;
 	import ld28.EntityCreator;
-	import ld28.graphics.CircleView;
 	import ld28.graphics.TextView;
 	import ld28.nodes.GameStateNode;
-	import ld28.nodes.MembranChainNode;
+	import ld28.Utils;
+	import org.as3commons.reflect.Method;
+	import org.as3commons.reflect.Type;
 	
 	/**
 	 * ...
@@ -37,9 +36,11 @@ package ld28.systems {
 		private var game:GameStateNode;
 		private var entities:Dictionary = new Dictionary();
 		private var membranChainNodes:NodeList = null;
+		private var reflectionType:Type;
 		
 		public function GameManager(creator:EntityCreator) {
 			this.creator = creator;
+			this.reflectionType = Type.forInstance(this);
 		}
 		
 		override public function addToEngine(engine:Engine):void {
@@ -60,14 +61,13 @@ package ld28.systems {
 			game = null;
 		}
 		
-		internal function state_init(time:Number):void {
-			var player:Entity;
+		public function state_start_init(time:Number):void {
 			var position:Position;
 			var display:Display;
 			var textView:TextView;
 			var size:Size;
-			//init
-			player = creator.createPlayer();
+			
+			entities["player"] = creator.createPlayer();
 			
 			entities["controls"] = creator.createText("Controls: W,A,S,D,Space");
 			position = Position(entities["controls"].get(Position));
@@ -78,144 +78,108 @@ package ld28.systems {
 			textView.textField.defaultTextFormat.align = TextFormatAlign.LEFT;
 			textView.textField.autoSize = TextFieldAutoSize.LEFT;
 			
-			game.gameState.state = "move_here_init";
+			game.gameState.initialized = true;
 		}
 		
-		internal function state_move_here_init(time:Number):void {
-			var display:Display;
-			var position:Position;
-			var size:Size;
-			var textView:TextView;
-			var circleView:CircleView;
-			var circle:Circle;
-			if (!entities["move_here_timer"]) {
-				entities["move_here_timer"] = creator.createTimer();
-			}
-			if (!entities["move_here_text"]) {
-				entities["move_here_text"] = creator.createText("Move here");
-				position = Position(entities["move_here_text"].get(Position));
-				position.position.x = 200;
-				position.position.y = 150;
-				size = Size(entities["move_here_text"].get(Size));
-				display = Display(entities["move_here_text"].get(Display));
-				textView = TextView(display.displayObject);
-				textView.textField.y -= 10;
-			}
-			if (!entities["move_here_circle"]) {
-				entities["move_here_circle"] = creator.createCircle(10, 0xffffff, 0.1);
-				entities["move_here_circle"].add(new Collision());
-				entities["move_here_circle"].add(new SpatialHashed());
-				entities["move_here_circle"].add(new Anchor(entities["move_here_text"]));
-				display = Display(entities["move_here_circle"].get(Display));
-				entities["move_here_circle"].add(new Redrawing(CircleView(display.displayObject)));
-			}
-			if (entities["move_here_timer"]) {
-				if (Timer(Entity(entities["move_here_timer"]).get(Timer)).seconds < 0.1) {
-					if (entities["move_here_text"]) {
-						if (entities["move_here_circle"]) {
-							size = Size(entities["move_here_text"].get(Size));
-							circle = Circle(entities["move_here_circle"].get(Circle));
-							circle.radius = size.size.x / 2;
-							size = Size(entities["move_here_circle"].get(Size));
-							size.size.x = circle.radius * 2;
-							size.size.y = circle.radius * 2;
-							display = Display(entities["move_here_circle"].get(Display));
-							circleView = CircleView(display.displayObject);
-							circleView._radius = circle.radius;
-						}
-					}
-				} else {
-					creator.destroyEntity(entities["move_here_timer"]);
-					delete entities["move_here_timer"];
-					game.gameState.state = "move_here";
-				}
-				
-			}
+		internal function blendOutEntity(entity:Entity, t:Number = 1):void {
+			entity.add(new Timer());
+			entity.add(new Lifetime(t));
+			entity.add(new AlphaTween(0, t));
 		}
 		
-		internal function state_move_here(time:Number):void {
-			var size:Size;
-			var circle:Circle;
-			var display:Display;
-			var circleView:CircleView;
-			var collision:Collision;
-			var textView:TextView;
-			var format:TextFormat;
-			var entity:Entity;
+		public function state_start(time:Number):void {
+			game.gameState.state = "move_here";
+		}
+		
+		public function state_move_here_init(time:Number):void {
+			// player can move for free
+			Mover(entities["player"].get(Mover)).energyConsumption = 0;
 			
-			if (entities["move_here_text"]) {
+			// give player goal to move to
+			entities[game.gameState.state + "_goal"] = creator.createLabeledCircle("Move here", 200, 250);
+			
+			game.gameState.initialized = true;
+		}
+		
+		public function state_move_here(time:Number):void {
+			if (CircleCircleCollision(entities[game.gameState.state + "_goal"].get(CircleCircleCollision)).collidingEntities[entities["player"]]) {
+				// give player positive feedback
+				entities[game.gameState.state + "_good_job"] = creator.createFloatingText("Good job!");
+				var position:Position = Position(entities[game.gameState.state + "_good_job"].get(Position));
+				var textView:TextView = TextView(Display(entities[game.gameState.state + "_good_job"].get(Display)).displayObject);
+				Utils.pointSet(position.position, Position(entities[game.gameState.state + "_goal"].get(Position)).position);
+				Utils.pointAdd(position.position, new Point(0, -60));
+				textView.textField.defaultTextFormat = new TextFormat(null, 30, 0x52B600);
 				
-				if (entities["move_here_circle"]) {
-					size = Size(entities["move_here_text"].get(Size));
-					circle = Circle(entities["move_here_circle"].get(Circle));
-					circle.radius = size.size.x / 2;
-					size = Size(entities["move_here_circle"].get(Size));
-					size.size.x = circle.radius * 2;
-					size.size.y = circle.radius * 2;
-					display = Display(entities["move_here_circle"].get(Display));
-					circleView = CircleView(display.displayObject);
-					circleView._radius = circle.radius;
-				}
+				// remove old goal
+				blendOutEntity(entities[game.gameState.state + "_goal"]);
+				delete entities[game.gameState.state + "_goal"];
 				
-				collision = Collision(entities["move_here_circle"].get(Collision));
-				if (collision) {
-					for each (entity in collision.collidingEntities) {
-						if (entity.has(Player)) {
-							if ((Circle(entity.get(Circle)).radius + Circle(entities["move_here_circle"].get(Circle)).radius) >= Point.distance(Position(entity.get(Position)).position, Position(entities["move_here_circle"].get(Position)).position)) {
-								
-								var tmp:Entity = creator.createFloatingText("Good job!", 2);
-								display = Display(tmp.get(Display));
-								textView = TextView(display.displayObject);
-								
-								format = new TextFormat();
-								format.color = 0x52B600;
-								format.size = 30;
-								textView.textField.defaultTextFormat = format;
-								
-								tmp.add(new Anchor(entities["move_here_text"]));
-								entities["move_here_circle"].remove(Collision);
-								
-								entities["move_here_circle"].add(new Lifetime(5));
-								entities["move_here_circle"].add(new Timer());
-								entities["move_here_circle"].add(new AlphaTween(0, 5));
-								
-								entities["move_here_text"].add(new Lifetime(5));
-								entities["move_here_text"].add(new Timer());
-								entities["move_here_text"].add(new AlphaTween(0, 5));
-								
-								delete entities["move_here_text"];
-								delete entities["move_here_circle"];
-								
-								var i:int;
-								// spawn energy particles
-								for (i = 0; i < 10; i++) {
-									creator.createEnergyParticle();
-								}
-								// spawn energy producers
-								for (i = 0; i < 2; i++) {
-									creator.createEnergyProducer();
-								}
-								// spawn membran parts
-								for (i = 0; i < 20; i++) {
-									creator.createMembranPart();
-								}
-								game.gameState.state = "alive";
-								
-								membranChainNodes = engine.getNodeList(MembranChainNode);
-							}
-						}
-					}
+				game.gameState.state = "learn_about_energy";
+			}
+		}
+		
+		public function state_learn_about_energy_init(time:Number):void {
+			// player movement now costs a lot of energy
+			Mover(entities["player"].get(Mover)).energyConsumption = 0.006;
+			
+			// give player goal to move to
+			entities[game.gameState.state + "_goal"] = creator.createLabeledCircle("Now move here", 500, 350);
+			
+			// tell player that he consumes energy while moving
+			entities[game.gameState.state + "_hint1"] = creator.createFloatingText("Moving consumes energy", 5);
+			entities[game.gameState.state + "_hint1"].add(new Anchor(entities["player"], new Point(0, -60)));
+			
+			game.gameState.initialized = true;
+		}
+		
+		public function state_learn_about_energy(time:Number):void {
+			var energyStorage:EnergyStorage = EnergyStorage(entities["player"].get(EnergyStorage));
+			
+			if ((energyStorage.maxEnergy > 0) && (energyStorage.energy <= 0)) {
+				// tell player that movement is not possible without energy
+				if (!entities[game.gameState.state + "_hint2"]) {
+					entities[game.gameState.state + "_hint2"] = creator.createFloatingText("Without energy you can not move", 5);
+					entities[game.gameState.state + "_hint2"].add(new Anchor(entities["player"], new Point(0, -60)));
 				}
 			}
 		
+			//var minEnergy = energyStorage.maxEnergy * 0.1;
+			//if (energyStorage.energy < minEnergy)
+			//energyStorage.energy = minEnergy;
 		}
 		
-		internal function state_alive(time:Number):void {
+		//internal function state_build_ring(time:Number):void {
+		//var chains:NodeList = engine.getNodeList(MembranChainNode);
+		//if (chains.size == 1) {
+		//
+		//}
+		//}
+		
+		public function state_alive_init(time:Number):void {
+			var i:int;
+			// spawn energy particles
+			for (i = 0; i < 10; i++) {
+				creator.createEnergyParticle();
+			}
+			// spawn energy producers
+			for (i = 0; i < 2; i++) {
+				creator.createEnergyProducer();
+			}
+			// spawn membran parts
+			for (i = 0; i < 20; i++) {
+				creator.createMembranPart();
+			}
+			game.gameState.initialized = true;
+		}
+		
+		public function state_alive(time:Number):void {
 		/* empty */
 		}
 		
 		override public function update(time:Number):void {
 			var display:Display;
+			
 			if (game) {
 				if (entities["controls"]) {
 					display = Display(entities["controls"].get(Display));
@@ -226,13 +190,24 @@ package ld28.systems {
 					display.container.setChildIndex(display.displayObject, display.container.numChildren - 1);
 				}
 				if (game.gameState.state == "") {
-					state_init(time);
-				} else if (game.gameState.state == "move_here_init") {
-					state_move_here_init(time);
-				} else if (game.gameState.state == "move_here") {
-					state_move_here(time);
-				} else if (game.gameState.state == "alive") {
-					state_alive(time);
+					game.gameState.state = "start";
+				}
+				var method_name:String = "state_" + game.gameState.state;
+				if (!game.gameState.initialized) {
+					var method_init_name:String = method_name + "_init";
+					var state_init_handler:Method = this.reflectionType.getMethod(method_init_name);
+					if (state_init_handler) {
+						state_init_handler.invoke(this, [time]);
+					} else {
+						// no init handler, so skip initialization
+						game.gameState.initialized = true;
+					}
+				}
+				var state_handler:Method = this.reflectionType.getMethod(method_name);
+				if (state_handler) {
+					state_handler.invoke(this, [time]);
+				} else {
+					throw new Error("game state handler for state '" + method_name + "' not implemented");
 				}
 				
 			}

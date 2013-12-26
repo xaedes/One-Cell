@@ -16,9 +16,9 @@ package ld28.systems {
 		
 		private function updateNode(node:AttractorControllerNode, time:Number):void {
 			if (keyPoll.isDown(node.attractorController.activate)) {
-				node.attractor.fsm.changeState("active");
+				node.stateMachine.fsm.changeState("active");
 			} else {
-				node.attractor.fsm.changeState("inactive");
+				node.stateMachine.fsm.changeState("inactive");
 					//node.attractor.strength = 0;		
 			}
 		}

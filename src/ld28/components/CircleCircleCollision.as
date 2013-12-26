@@ -1,13 +1,15 @@
 package ld28.components {
-	import ash.core.Entity;
-	import de.polygonal.ds.HashSet;
-	import de.polygonal.ds.Set;
 	import flash.utils.Dictionary;
 	
-	public class Collision {
+	/**
+	 * ...
+	 * @author xaedes
+	 */
+	public class CircleCircleCollision {
 		public var collidingEntities:Dictionary = new Dictionary();
 		
-		public function Collision() {
+		public function CircleCircleCollision() {
+		
 		}
 		
 		public function clear():void {
@@ -15,4 +17,5 @@ package ld28.components {
 				delete collidingEntities[key];
 		}
 	}
+
 }

@@ -2,6 +2,7 @@ package ld28 {
 	import ash.core.Engine;
 	import ash.tick.FrameTickProvider;
 	import flash.display.DisplayObjectContainer;
+	import ld28.components.CircleCircleCollision;
 	import ld28.input.KeyPoll;
 	import ld28.input.MousePoll;
 	import ld28.systems.AlphaTweenSystem;
@@ -10,7 +11,9 @@ package ld28 {
 	import ld28.systems.AttractorSystem;
 	import ld28.systems.AudioSystem;
 	import ld28.systems.AutoResizingRectViewSystem;
+	import ld28.systems.AutosizeSystem;
 	import ld28.systems.BreakingConnectionSystem;
+	import ld28.systems.CircleCircleCollisionSystem;
 	import ld28.systems.CollisionWithSpatialHashingSystem;
 	import ld28.systems.DistanceConstraintSystem;
 	import ld28.systems.EnergyCollectingCollisionSystem;
@@ -18,6 +21,8 @@ package ld28 {
 	import ld28.systems.EnergyStorageEmitterSystem;
 	import ld28.systems.EnergyStorageViewSystem;
 	import ld28.systems.EnergyStorageWarningSystem;
+	import ld28.systems.FitCircleToSizeSystem;
+	import ld28.systems.FitSizeAroundOtherEntitySystem;
 	import ld28.systems.GameManager;
 	import ld28.systems.GravitySystem;
 	import ld28.systems.KeyboardMotionControlSystem;
@@ -28,12 +33,15 @@ package ld28 {
 	import ld28.systems.MembranSystem;
 	import ld28.systems.MovementSystem;
 	import ld28.systems.PositionTweenSystem;
+	import ld28.systems.ProfilingSystem;
 	import ld28.systems.RedrawingSystem;
 	import ld28.systems.RenderSystem;
 	import ld28.systems.SolidCollisionSystem;
 	import ld28.systems.SpatialHashingSystem;
-	import ld28.systems.TextViewAutosizeSystem;
 	import ld28.systems.TimerSystem;
+	import ld28.systems.UpdateCircleViewSystem;
+	import ld28.systems.UpdateLabeledCircleSystem;
+	import ld28.systems.UpdateTextViewSystem;
 	
 	/**
 	 * ...
@@ -76,7 +84,6 @@ package ld28 {
 			var k:int = 0;
 			engine.addSystem(new AutoResizingRectViewSystem(), k++);
 			engine.addSystem(new RedrawingSystem(), k++);
-			engine.addSystem(new AnchorSystem(), k++);
 			engine.addSystem(new MovementSystem(config), k++);
 			engine.addSystem(new GravitySystem(), k++);
 			engine.addSystem(new KeyboardMotionControlSystem(keyPoll), k++);
@@ -85,6 +92,7 @@ package ld28 {
 			//engine.addSystem(new CollisionSystem(), 0);
 			engine.addSystem(spatialHashingSystem, k++);
 			engine.addSystem(new CollisionWithSpatialHashingSystem(spatialHashingSystem), k++);
+			engine.addSystem(new CircleCircleCollisionSystem(), k++);
 			engine.addSystem(new EnergyCollectingCollisionSystem(creator, config), k++);
 			engine.addSystem(new SolidCollisionSystem(), k++);
 			engine.addSystem(new EnergyStorageEmitterSystem(creator), k++);
@@ -101,11 +109,18 @@ package ld28 {
 			engine.addSystem(new AlphaTweenSystem(), k++);
 			engine.addSystem(new PositionTweenSystem(), k++);
 			engine.addSystem(new EnergyStorageWarningSystem(creator), k++);
-			engine.addSystem(new TextViewAutosizeSystem(), k++);
+			engine.addSystem(new AutosizeSystem(), k++);
 			engine.addSystem(new MembranChainSpatialUpdateSystem(), k++);
 			engine.addSystem(new MembranChainOrderedEntitiesSystem(creator), k++);
 			engine.addSystem(new MembranChainContainedEntitesSystem(creator), k++);
+			engine.addSystem(new FitSizeAroundOtherEntitySystem(), k++);
+			engine.addSystem(new FitCircleToSizeSystem(), k++);
+			engine.addSystem(new UpdateCircleViewSystem(), k++);
+			engine.addSystem(new UpdateTextViewSystem(), k++);
+			engine.addSystem(new UpdateLabeledCircleSystem(), k++);
+			engine.addSystem(new AnchorSystem(), k++);
 			engine.addSystem(new RenderSystem(container), k++);
+			//engine.addSystem(new ProfilingSystem(), k++);
 		
 		}
 		

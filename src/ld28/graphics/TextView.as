@@ -12,33 +12,38 @@ package ld28.graphics {
 	 */
 	public class TextView extends Sprite implements Redrawable {
 		public var textField:TextField;
-		private var text:Text;
 		
-		public function TextView(text:Text) {
+		public function TextView(_text:String = "") {
 			textField = createTextField();
 			textField.x = 0;
 			textField.y = 0;
-			//textField.text
 			addChild(textField);
-			this.text = text;
+			text = _text;
 		}
 		
 		public function redraw(time:Number):void {
-			textField.text = text.text;
+		
+		}
+		
+		public function set text(value:String):void {
+			this.textField.text = value;
+		}
+		
+		public function get text():String {
+			return this.textField.text;
 		}
 		
 		private function createTextField():TextField {
 			var tf:TextField = new TextField();
 			var format:TextFormat = new TextFormat();
 			format.align = TextFormatAlign.CENTER;
-			format.bold = true;
+			//format.bold = true;
 			format.color = 0xFFFFFF;
-			//format.color = 0xFF0000;
 			format.font = "Helvetica";
 			format.size = 18;
 			tf.defaultTextFormat = format;
 			tf.selectable = false;
-			//tf.width = 120;
+			
 			tf.autoSize = TextFieldAutoSize.CENTER;
 			return tf;
 		}

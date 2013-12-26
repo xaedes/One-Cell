@@ -6,7 +6,6 @@ package ld28.nodes {
 	public class AnchorNode extends Node {
 		public var anchor:Anchor;
 		public var position:Position;
-	
 	}
 
 }

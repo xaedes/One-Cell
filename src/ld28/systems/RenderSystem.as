@@ -8,6 +8,7 @@ package ld28.systems {
 	import ld28.components.Display;
 	import ld28.components.Position;
 	import ld28.components.PositionTween;
+	import ld28.components.Size;
 	import ld28.nodes.RenderNode;
 	import ld28.Utils;
 	
@@ -57,6 +58,11 @@ package ld28.systems {
 						Utils.pointAdd(additional, positionTween.current);
 					}
 				}
+				//if (node.entity.has(Size)) {
+				//var size:Size = Size(node.entity.get(Size));
+				//Utils.pointSub(additional, size.alignOffset);
+				//
+				//}
 				
 				displayObject.x = position.position.x + additional.x;
 				displayObject.y = position.position.y + additional.y;

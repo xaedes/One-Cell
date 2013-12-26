@@ -35,12 +35,8 @@ package ld28.systems {
 			
 			// clear all collisions
 			for (node1 = nodes.head; node1; node1 = node1.next) {
-				//node1.collision.collidingEntities.clear(true); //todo test performance with purge
 				node1.collision.clear();
-					//node1.collision.collidingEntities.splice(0, node1.collision.collidingEntities.length);
 			}
-			
-			//var n:int = 0;
 			
 			var walker1:DLLNode;
 			var walker2:DLLNode;
@@ -51,12 +47,10 @@ package ld28.systems {
 					var cell:GridCell = map.getCell(x, y);
 					for (walker1 = cell.nodes.head; walker1; walker1 = walker1.next) {
 						var spatialNode1:SpatialHashingNode = SpatialHashingNode(walker1.val);
-						//node1 = CollisionNode(family.nodeByEntity(spatialNode.entity));
 						node1 = CollisionNode(family.entities[spatialNode1.entity]);
 						if (node1) {
 							var boundingRect1:Rectangle = boundingRect(node1);
 							for (walker2 = walker1.next; walker2; walker2 = walker2.next) {
-								//for (node2 = node1.next; node2; node2 = node2.next) {
 								var spatialNode2:SpatialHashingNode = SpatialHashingNode(walker2.val);
 								if (node1.collision.collidingEntities[spatialNode2.entity]) {
 									continue;
@@ -65,27 +59,15 @@ package ld28.systems {
 								if (node2) {
 									var boundingRect2:Rectangle = boundingRect(node1);
 									if (boundingRect1.intersects(boundingRect2)) {
-										//if (node1.entity.has(Radar) || node2.entity.has(Radar)) {
-										//trace("radar collision");
-										//}
-										//n++;
 										node1.collision.collidingEntities[node2.entity] = node2.entity;
 										node2.collision.collidingEntities[node1.entity] = node1.entity;
-											//node1.collision.collidingEntities.push(node2.entity);
-											//node2.collision.collidingEntities.push(node1.entity);
-											//node1.collision.collidingEntities.append(node2.entity);
-											//node2.collision.collidingEntities.append(node1.entity);
 									}
 								}
 							}
 						}
-							//trace(n);
 					}
 				}
 			}
-		
-			//trace("CollisionWithSpatialHashingSystem", n);
-		
 		}
 		
 		override public function removeFromEngine(engine:Engine):void {

@@ -44,7 +44,7 @@ package ld28.systems {
 						}, new Dictionary());
 					start = Entity(results.accumulator["tail"]); // one of the tails
 				}
-				trace("blob", start);
+				//trace("blob", start);
 				if (start) {
 					
 					// clean old ordered list

@@ -3,10 +3,12 @@ package ld28 {
 	import ash.core.Entity;
 	import ash.fsm.EntityState;
 	import ash.fsm.EntityStateMachine;
+	import flash.display.DisplayObject;
 	import flash.events.TextEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.LocalConnection;
+	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
 	import ld28.components.AlphaTween;
 	import ld28.components.Anchor;
@@ -19,6 +21,7 @@ package ld28 {
 	import ld28.components.Breakable;
 	import ld28.components.CanBeContainedInMembranChains;
 	import ld28.components.Circle;
+	import ld28.components.CircleCircleCollision;
 	import ld28.components.Collision;
 	import ld28.components.Display;
 	import ld28.components.DistanceConstraint;
@@ -28,6 +31,8 @@ package ld28 {
 	import ld28.components.EnergyStorage;
 	import ld28.components.EnergyStorageEmitter;
 	import ld28.components.EnergyStorageWarning;
+	import ld28.components.FitCircleToSize;
+	import ld28.components.FitSizeAroundOtherEntity;
 	import ld28.components.GameState;
 	import ld28.components.Gravity;
 	import ld28.components.HasEnergyStorageView;
@@ -41,25 +46,34 @@ package ld28 {
 	import ld28.components.KeyboardMotionControls;
 	import ld28.components.MouseMotionControls;
 	import ld28.components.Mover;
+	import ld28.components.Padding;
 	import ld28.components.Player;
 	import ld28.components.Position;
 	import ld28.components.PositionTween;
 	import ld28.components.Radar;
 	import ld28.components.Redrawing;
+	import ld28.components.RemoveOtherEntitiesOnRemoval;
 	import ld28.components.Size;
 	import ld28.components.SolidCollision;
 	import ld28.components.SpatialHashed;
+	import ld28.components.StateMachine;
 	import ld28.components.Text;
-	import ld28.components.TextViewAutosize;
+	import ld28.components.Autosize;
 	import ld28.components.Timer;
+	import ld28.components.UpdateCircleView;
+	import ld28.components.UpdateLabeledCircle;
+	import ld28.components.UpdateTextView;
 	import ld28.easing.Easing;
 	import ld28.graphics.CircleView;
+	import ld28.graphics.ContainerView;
 	import ld28.graphics.EnergyParticleView;
 	import ld28.graphics.EnergyProducerView;
+	import ld28.graphics.LabeledCircleView;
 	import ld28.graphics.LineView;
 	import ld28.graphics.MembranPartView;
 	import ld28.graphics.MoverView;
 	import ld28.graphics.RectView;
+	import ld28.graphics.Redrawable;
 	import ld28.graphics.TextView;
 	
 	public class EntityCreator {
@@ -72,6 +86,13 @@ package ld28 {
 		}
 		
 		public function destroyEntity(entity:Entity):void {
+			if (entity.has(RemoveOtherEntitiesOnRemoval)) {
+				var removeOtherEntitiesOnRemoval:RemoveOtherEntitiesOnRemoval = RemoveOtherEntitiesOnRemoval(entity.get(RemoveOtherEntitiesOnRemoval));
+				while (removeOtherEntitiesOnRemoval.entitiesToRemove.length > 0) {
+					var otherEntity:Entity = removeOtherEntitiesOnRemoval.entitiesToRemove.pop();
+					engine.removeEntity(otherEntity);
+				}
+			}
 			engine.removeEntity(entity);
 		}
 		
@@ -101,8 +122,8 @@ package ld28 {
 				add(new Size(new Point(radius * 2, radius * 2), Size.ALIGN_CENTER_CENTER));
 				add(new Circle(radius));
 				add(new Display(moverView));
-				//add(new Mover(0.001));
-				add(new Mover(0.0));
+				add(new Mover(0.001));
+				//add(new Mover(0.0));
 				add(new Motion(0, 0, 0.95));
 				add(new EnergyStorage(10, 5));
 				add(new HasEnergyStorageView(moverView.energyStorageView));
@@ -113,6 +134,7 @@ package ld28 {
 				add(new EnergyStorageEmitter(0.1, radius + 3, 1, 10, 0, 1, 1));
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new Collision());
+				add(new CircleCircleCollision());
 				add(new SolidCollision(0.9));
 				add(new EnergyCollecting());
 				add(new SpatialHashed());
@@ -142,6 +164,7 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-10, 10), Utils.randomRange(-10, 10), 0.999));
 				add(new EnergyStorage(energyAmount, energyAmount));
 				add(new Collision());
+				add(new CircleCircleCollision());
 				add(new EnergyParticle());
 				add(new SpatialHashed());
 				add(new Mass(radius * radius * Math.PI * density));
@@ -174,6 +197,7 @@ package ld28 {
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.995));
 				add(new EnergyStorage(_maxEnergy, Utils.randomRange(0, _maxEnergy)));
 				add(new Collision());
+				add(new CircleCircleCollision());
 				//add(new EnergyProducer(0.1, 0.03));
 				add(new EnergyProducer(0.1, 0.2));
 				add(new EnergyStorageEmitter(0.01, radius + 3, 0, 30, 1, 2, 5));
@@ -201,6 +225,7 @@ package ld28 {
 				add(new Circle(radius));
 				add(new Display(view));
 				add(new Collision());
+				add(new CircleCircleCollision());
 				add(new SpatialHashed());
 			}
 			return entity;
@@ -229,6 +254,7 @@ package ld28 {
 				add(new Mass(radius * radius * Math.PI * density));
 				add(new SolidCollision(1));
 				add(new Collision());
+				add(new CircleCircleCollision());
 				add(new Display(membranPartView));
 				add(new Motion(Utils.randomRange(-50, 50), Utils.randomRange(-50, 50), 0.95));
 				add(new Radar(radar));
@@ -251,8 +277,8 @@ package ld28 {
 				add(new Position(0, 0));
 				add(new Size(new Point(), Size.ALIGN_TOP_LEFT));
 				add(new MembranChainSpatialUpdate());
-				add(new Collision());
-				add(new SpatialHashed());
+				//add(new Collision());
+				//add(new SpatialHashed());
 				//add(new Display(view));
 				//add(new Redrawing(view));
 				//add(new AutoResizingRectView(view));
@@ -306,25 +332,26 @@ package ld28 {
 			}
 			
 			with (entity) {
-				add(new Attractor(fsm));
+				add(new Attractor());
+				add(new StateMachine(fsm));
 			}
 			fsm.changeState("inactive");
 			return entity;
 		}
 		
-		public function createText(text:String = ""):Entity {
+		public function createText(text:String = "", autosize:Boolean = true):Entity {
 			var entity:Entity = new Entity();
 			
-			var textComponent:Text = new Text(text);
-			var view:TextView = new TextView(textComponent);
+			var view:TextView = new TextView(text);
 			with (entity) {
 				add(new Position(0, 0));
-				add(textComponent);
 				add(new Display(view));
-				add(new Redrawing(view));
-				add(new Size(new Point(), Size.ALIGN_TOP_LEFT));
-				add(new TextViewAutosize(view));
-				
+				add(new Text(text));
+				add(new UpdateTextView(view));
+				add(new Size(new Point(), Size.ALIGN_TOP_CENTER));
+				if (autosize) {
+					add(new Autosize(view));
+				}
 			}
 			
 			engine.addEntity(entity);
@@ -360,6 +387,46 @@ package ld28 {
 			with (entity) {
 				add(new Timer());
 			}
+			engine.addEntity(entity);
+			return entity;
+		}
+		
+		public function createContainer(x:Number = 0, y:Number = 0):Entity {
+			var entity:Entity = new Entity();
+			
+			var view:ContainerView = new ContainerView();
+			with (entity) {
+				add(new Position(x, y));
+				add(new Display(view));
+			}
+			engine.addEntity(entity);
+			return entity;
+		}
+		
+		public function createLabeledCircle(text:String, x:Number = 0, y:Number = 0):Entity {
+			var entity:Entity = new Entity();
+			
+			var view:LabeledCircleView = new LabeledCircleView(text);
+			
+			with (entity) {
+				add(new Position(x, y));
+				add(new Text(text));
+				add(new Circle());
+				add(new Padding(10));
+				add(new Size(null, Size.ALIGN_CENTER_CENTER));
+				add(new Autosize(view));
+				
+				add(new Display(view));
+				add(new UpdateTextView(view.textView));
+				add(new UpdateCircleView(view.circleView));
+				add(new UpdateLabeledCircle(view));
+				add(new Redrawing(view));
+				
+				add(new Collision());
+				add(new CircleCircleCollision());
+				add(new SpatialHashed());
+			}
+			
 			engine.addEntity(entity);
 			return entity;
 		}

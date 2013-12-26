@@ -40,25 +40,23 @@ package ld28.systems {
 				for each (entity in energyCollector.collision.collidingEntities) {
 					var energyParticle:EnergyParticleCollisionNode = EnergyParticleCollisionNode(energyParticlesFamily.entities[entity]);
 					if (energyParticle) {
-						if (Point.distance(energyCollector.position.position, energyParticle.position.position) <= (energyParticle.circle.radius + energyCollector.circle.radius)) {
-							creator.destroyEntity(energyParticle.entity);
+						creator.destroyEntity(energyParticle.entity);
+						
+						energyCollector.energyStorage.energy += energyParticle.energyStorage.energy;
+						
+						if (energyCollector.entity.has(Player)) {
+							var text:Entity = creator.createFloatingText("+", 1);
+							var textPosition:Position = Position(text.get(Position));
+							textPosition.position.x = energyCollector.position.position.x;
+							textPosition.position.y = energyCollector.position.position.y;
 							
-							energyCollector.energyStorage.energy += energyParticle.energyStorage.energy;
-							
-							if (energyCollector.entity.has(Player)) {
-								var text:Entity = creator.createFloatingText("+", 1);
-								var textPosition:Position = Position(text.get(Position));
-								textPosition.position.x = energyCollector.position.position.x;
-								textPosition.position.y = energyCollector.position.position.y;
-
+							if (energyCollector.entity.has(Audio)) {
 								
-								if (energyCollector.entity.has(Audio)) {
-									
-									var audio:Audio = energyCollector.entity.get(Audio);
-									audio.play(Assets.CollectEnergy);
-								}
+								var audio:Audio = energyCollector.entity.get(Audio);
+								audio.play(Assets.CollectEnergy);
 							}
 						}
+						
 					}
 				}
 			}

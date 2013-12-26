@@ -14,7 +14,7 @@ package ld28.systems {
 		
 		private function updateNode(node:PositionTweenNode, time:Number):void {
 			if (node.tween.start == null) {
-				node.tween.start = new Point(node.display.displayObject.x, node.display.displayObject.y);
+				node.tween.start = new Point(0, 0);
 				node.tween.current = node.tween.start.clone();
 			}
 			if ((node.tween.destination != null) && (node.tween.start != null) && (node.tween.time > 0)) {
