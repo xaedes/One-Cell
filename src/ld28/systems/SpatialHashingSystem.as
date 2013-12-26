@@ -26,6 +26,7 @@ package ld28.systems {
 		
 		public function SpatialHashingSystem(config:GameConfig, gridSize:Number = 50) {
 			super(SpatialHashingNode, updateNode, addNode, removeNode);
+			//this.profilingEnabled = false;
 			this.config = config;
 			this.gridSize = gridSize;
 			this.gridWidth = int(Math.max(2, Math.ceil(this.config.width / this.gridSize)));

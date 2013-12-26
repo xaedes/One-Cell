@@ -18,6 +18,7 @@ package ld28.systems {
 		
 		public function CollisionWithSpatialHashingSystem(spatialHashingSystem:SpatialHashingSystem) {
 			this.map = spatialHashingSystem;
+			//this.profilingEnabled = false;
 		}
 		
 		override public function addToEngine(engine:Engine):void {
