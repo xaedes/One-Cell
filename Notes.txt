@@ -1,0 +1,16 @@
+
+Cellcraft
+
+-Story
+ -Characters
+  -in Tutorial only seen as Mysterious Figure
+  -there is a robot the player can identify with
+   -how is this obtained?
+    -ridicilious story twists that provoke certain thoughts
+	-these thoughts are spoken out by the robot
+
+-circular selecting area with mouse (instead of rectangular) of entities
+ -feels more organic
+
+-health=membrane health
+-keywords in tips are bold
