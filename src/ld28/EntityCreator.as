@@ -42,6 +42,7 @@ package ld28 {
 	import ld28.components.MembranChain;
 	import ld28.components.MembranChainOrderedEntities;
 	import ld28.components.MembranChainSpatialUpdate;
+	import ld28.components.MembranChainUpdateOrderedEntities;
 	import ld28.components.Motion;
 	import ld28.components.KeyboardMotionControls;
 	import ld28.components.MouseMotionControls;
@@ -284,6 +285,7 @@ package ld28 {
 				//add(new Redrawing(view));
 				//add(new AutoResizingRectView(view));
 				add(new MembranChainOrderedEntities());
+				add(new MembranChainUpdateOrderedEntities());
 			}
 			engine.addEntity(entity);
 			return entity;

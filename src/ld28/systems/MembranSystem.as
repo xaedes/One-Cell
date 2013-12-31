@@ -18,6 +18,7 @@ package ld28.systems {
 	import ld28.components.Membran;
 	import ld28.components.MembranChain;
 	import ld28.components.MembranChainOrderedEntities;
+	import ld28.components.MembranChainUpdateOrderedEntities;
 	import ld28.components.Player;
 	import ld28.components.Position;
 	import ld28.components.Radar;
@@ -295,9 +296,9 @@ package ld28.systems {
 				membranChain.addPart(Entity(current));
 			}
 			membranChain.circular = result.remarks["circular"];
-			if (membranChainEntity.has(MembranChainOrderedEntities)) {
-				var membranChainOrderedEntities:MembranChainOrderedEntities = MembranChainOrderedEntities(membranChainEntity.get(MembranChainOrderedEntities));
-				membranChainOrderedEntities.needsUpdate = true;
+			// update order order of parts
+			if (membranChainEntity.has(MembranChainOrderedEntities) && !membranChainEntity.has(MembranChainUpdateOrderedEntities)) {
+				membranChainEntity.add(new MembranChainUpdateOrderedEntities());
 			}
 			// apply new chain to all entities of chain
 			traverseMembranChain(entity, function(current:Entity, accumulator:Object, visited:Dictionary):void {
@@ -305,9 +306,9 @@ package ld28.systems {
 						var membran:Membran = Membran(current.get(Membran));
 						// remove old membran chain
 						if (membran.chain.has(MembranChain)) {
-							// destroy old chain if it now has zero size
 							var chain:MembranChain = membran.chain.get(MembranChain);
 							chain.removePart(current);
+							// destroy old chain if it now has zero size
 							if (chain.size == 0) {
 								creator.destroyEntity(membran.chain);
 								membran.chain = null;
